@@ -3,11 +3,15 @@ import { Box, Typography, Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
-type Tour = {
-	title: string;
-	desc: string;
-	link?: string;
-};
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
+import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
+import LanguageIcon from "@mui/icons-material/Language";
+
+import type { Tour, Feature } from "../types/tour";
+import {
+	containerVariants,
+	itemVariantsDown,
+} from "../animations/motionVariants";
 
 const tours: Tour[] = [
 	{
@@ -27,32 +31,25 @@ const tours: Tour[] = [
 	},
 ];
 
-const containerVariants = {
-	hidden: { opacity: 0, scale: 0.9 },
-	visible: {
-		opacity: 1,
-		scale: 1,
-		transition: {
-			duration: 0,
-			delayChildren: 0.3,
-			staggerChildren: 0.2,
-		},
+const features: Feature[] = [
+	{
+		icon: <LanguageIcon sx={{ fontSize: 40, color: "#1976d2" }} />,
+		title: "Большой выбор",
+		desc: "Туры по России и всему миру",
 	},
-};
-
-const itemVariantsDown = {
-	hidden: { opacity: 0, y: 20 },
-	visible: {
-		opacity: 1,
-		y: 0,
-		transition: { type: "spring", stiffness: 300, damping: 24 },
+	{
+		icon: <FlightTakeoffIcon sx={{ fontSize: 40, color: "#1976d2" }} />,
+		title: "Удобная бронь",
+		desc: "Оформление за пару минут",
 	},
-};
+	{
+		icon: <SupportAgentIcon sx={{ fontSize: 40, color: "#1976d2" }} />,
+		title: "Поддержка 24/7",
+		desc: "Помощь в любое время суток",
+	},
+];
 
-const TourCard: React.FC<{ tour: Tour } & React.ComponentProps<any>> = ({
-	tour,
-	...props
-}) => (
+const TourCard: React.FC<{ tour: Tour }> = ({ tour, ...props }) => (
 	<Box
 		component={Link}
 		to={tour.link || "#"}
@@ -96,7 +93,7 @@ const MotionTourCard = motion(TourCard);
 
 export default function Home() {
 	return (
-		<>
+		<div className='home'>
 			<motion.div
 				variants={containerVariants}
 				initial='hidden'
@@ -105,9 +102,9 @@ export default function Home() {
 				<Box
 					component='section'
 					sx={{
-						minHeight: "660px",
+						minHeight: "480px",
 						backgroundImage:
-							"url('https://www.atorus.ru/sites/default/files/styles/head_carousel/public/2024-01/46155579904_745ca62eae_b.jpg.webp?itok=mGeMLjpM')",
+							"url('https://opis-cdn.tinkoffjournal.ru/mercury/faq-thailand__main_.z9x1nlkar7tp.jpg')",
 						backgroundSize: "cover",
 						backgroundPosition: "center",
 						color: "white",
@@ -212,58 +209,53 @@ export default function Home() {
 							variant='h4'
 							gutterBottom
 							color='black'
-							sx={{ textAlign: "center", pb: 3, m: 0 }}>
+							sx={{ textAlign: "center", pb: 3 }}>
 							Почему выбирают нас
 						</Typography>
 					</motion.div>
+
 					<Box
 						sx={{
 							display: "flex",
 							flexWrap: "wrap",
 							gap: 3,
 							justifyContent: "center",
-							color: "#000",
+							alignItems: "stretch",
 						}}>
-						{[
-							"Большой выбор туров по всему миру",
-							"Удобное онлайн-бронирование",
-							"Поддержка 24/7 и лучшие цены",
-						].map((item, i) => (
+						{features.map((feature, i) => (
 							<motion.div
 								variants={itemVariantsDown}
 								key={i}>
 								<Box
 									sx={{
-										width: 250,
-										bgcolor: "rgba(0,0,0,0.15)",
-										p: 2,
-										borderRadius: 2,
+										width: 280,
+										bgcolor: "#f5f5f5",
+										p: 3,
+										borderRadius: 3,
 										textAlign: "center",
+										boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+										transition: "transform 0.3s",
+										"&:hover": {
+											transform: "translateY(-5px)",
+										},
 									}}>
-									<Typography variant='body1'>{item}</Typography>
+									<Box sx={{ mb: 2 }}>{feature.icon}</Box>
+									<Typography
+										variant='h6'
+										gutterBottom>
+										{feature.title}
+									</Typography>
+									<Typography
+										variant='body2'
+										color='text.secondary'>
+										{feature.desc}
+									</Typography>
 								</Box>
 							</motion.div>
 						))}
 					</Box>
 				</Box>
 			</motion.div>
-
-			{/* Футер — без анимаций */}
-			<Box
-				component='footer'
-				sx={{
-					mt: 10,
-					py: 4,
-					textAlign: "center",
-					color: "#ccc",
-					bgcolor: "#D9D9D9",
-				}}>
-				<Typography
-					variant='body2'
-					sx={{ color: "grey" }}>
-					© 2025 TourApp. Все права защищены.
-				</Typography>
-			</Box>
-		</>
+		</div>
 	);
 }

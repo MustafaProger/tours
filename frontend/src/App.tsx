@@ -2,6 +2,7 @@ import Header from "./components/Header";
 import { Toolbar } from "@mui/material";
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
+import Footer from "./pages/Footer";
 
 function App() {
 	return (
@@ -30,6 +31,7 @@ function App() {
 					element={<h2>Контакты</h2>}
 				/>
 			</Routes>
+			<Footer/>
 		</div>
 	);
 }

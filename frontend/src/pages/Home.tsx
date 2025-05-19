@@ -93,7 +93,7 @@ const MotionTourCard = motion(TourCard);
 
 export default function Home() {
 	return (
-		<div className='home'>
+		<Box component='main'>
 			<motion.div
 				variants={containerVariants}
 				initial='hidden'
@@ -256,6 +256,6 @@ export default function Home() {
 					</Box>
 				</Box>
 			</motion.div>
-		</div>
+		</Box>
 	);
 }

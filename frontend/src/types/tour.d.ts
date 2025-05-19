@@ -11,3 +11,9 @@ export type Feature = {
 	title: string;
 	desc: string;
 };
+
+export type AboutPageTeam = {
+	name: string;
+	role: string;
+	avatar: string;
+};

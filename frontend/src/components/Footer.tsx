@@ -21,7 +21,12 @@ const Footer: React.FC = () => {
 				<Grid
 					container
 					spacing={4}
-					sx={{ justifyContent: "space-evenly" }}>
+					sx={{
+						justifyContent: "space-evenly",
+						"@media (max-width: 768px)": {
+							justifyContent: "start"
+						},
+					}}>
 					<Grid
 						item
 						xs={12}

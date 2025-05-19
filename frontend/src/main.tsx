@@ -5,10 +5,12 @@ import App from "./App";
 
 import "./index.css";
 import "@fontsource/montserrat";
+import ScrollToTop from "./other/ScrollToTop";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
 	<React.StrictMode>
 		<BrowserRouter>
+			<ScrollToTop />
 			<App />
 		</BrowserRouter>
 	</React.StrictMode>

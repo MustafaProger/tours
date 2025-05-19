@@ -2,7 +2,8 @@ import Header from "./components/Header";
 import { Toolbar } from "@mui/material";
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
-import Footer from "./pages/Footer";
+import Footer from "./components/Footer";
+import About from "./pages/About";
 
 function App() {
 	return (
@@ -16,7 +17,7 @@ function App() {
 				/>
 				<Route
 					path='/about'
-					element={<h2>О проекте</h2>}
+					element={<About />}
 				/>
 				<Route
 					path='/tours'
@@ -31,7 +32,7 @@ function App() {
 					element={<h2>Контакты</h2>}
 				/>
 			</Routes>
-			<Footer/>
+			<Footer />
 		</div>
 	);
 }

@@ -17,8 +17,10 @@ import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
 
 const navItems = [
-	{ label: "Home", path: "/" },
-	{ label: "About", path: "/about" },
+	{ label: "Главная", path: "/" },
+	{ label: "О нас", path: "/about" },
+	{ label: "Туры", path: "/tours" },
+	{ label: "Контакты", path: "/contacts" },
 ];
 
 export default function DrawerAppBar() {
@@ -41,7 +43,7 @@ export default function DrawerAppBar() {
 			<List>
 				{navItems.map((item) => (
 					<ListItem
-						key={item.label}
+						key={item.path}
 						disablePadding>
 						<ListItemButton
 							component={Link}
@@ -56,7 +58,7 @@ export default function DrawerAppBar() {
 	);
 
 	return (
-		<Box sx={{ display: "flex" }}>
+		<Box sx={{ display: "flex", textAlign: "center" }}>
 			<CssBaseline />
 			<AppBar component='nav'>
 				<Toolbar sx={{ justifyContent: "end" }}>
@@ -79,12 +81,12 @@ export default function DrawerAppBar() {
 							TourApp
 						</Box>
 					</Typography>
-					<Box sx={{ display: { xs: "none", sm: "block" }}}>
+					<Box sx={{ display: { xs: "none", sm: "block" } }}>
 						{navItems.map((item) => (
 							<Button
 								component={Link}
 								to={item.path}
-								key={item.label}
+								key={item.path}
 								sx={{ color: "#fff" }}>
 								{item.label}
 							</Button>

@@ -1,125 +1,125 @@
-import React from "react";
-import {
-	Box,
-	Container,
-	Typography,
-	Grid,
-	Link,
-	IconButton,
-} from "@mui/material";
+import { Link } from 'react-router-dom';
+import { Facebook, Instagram, Twitter, MapPin, Phone, Mail } from 'lucide-react';
 
-import InstagramIcon from "@mui/icons-material/Instagram";
-import TelegramIcon from "@mui/icons-material/Telegram";
-import FacebookIcon from "@mui/icons-material/Facebook";
-
-const Footer: React.FC = () => {
-	return (
-		<Box
-			component='footer'
-			sx={{ bgcolor: "#1876D1", color: "white", py: 5, mt: 10 }}>
-			<Container maxWidth='lg'>
-				<Grid
-					container
-					spacing={4}
-					sx={{
-						justifyContent: "space-evenly",
-						"@media (max-width: 768px)": {
-							justifyContent: "start"
-						},
-					}}>
-					<Grid
-						item
-						xs={12}
-						md={4}>
-						<Typography
-							variant='h6'
-							gutterBottom>
-							TourApp
-						</Typography>
-						<Typography variant='body2'>
-							Исследуйте мир с нами. <br /> Лучшие туры по доступным ценам.
-						</Typography>
-					</Grid>
-
-					<Grid
-						item
-						xs={12}
-						md={4}>
-						<Typography
-							variant='h6'
-							gutterBottom>
-							Быстрые ссылки
-						</Typography>
-						<Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-							<Link
-								href='/'
-								underline='none'
-								color='inherit'>
-								Главная
-							</Link>
-							<Link
-								href='/about'
-								underline='none'
-								color='inherit'>
-								О нас
-							</Link>
-							<Link
-								href='/tours'
-								underline='none'
-								color='inherit'>
-								Туры
-							</Link>
-						</Box>
-					</Grid>
-
-					<Grid
-						item
-						xs={12}
-						md={4}>
-						<Typography
-							variant='h6'
-							gutterBottom>
-							Мы в соцсетях
-						</Typography>
-						<Box sx={{ display: "flex", gap: 1 }}>
-							<IconButton
-								href='#'
-								target='_blank'
-								sx={{ color: "white" }}>
-								<InstagramIcon />
-							</IconButton>
-							<IconButton
-								href='#'
-								target='_blank'
-								sx={{ color: "white" }}>
-								<TelegramIcon />
-							</IconButton>
-							<IconButton
-								href='#'
-								target='_blank'
-								sx={{ color: "white" }}>
-								<FacebookIcon />
-							</IconButton>
-						</Box>
-					</Grid>
-				</Grid>
-
-				<Box
-					sx={{
-						mt: 4,
-						textAlign: "center",
-						borderTop: "1px solid rgba(255,255,255,0.2)",
-						pt: 2,
-					}}>
-					<Typography
-						variant='body2'
-						color='inherit'>
-						© 2025 TourApp. Все права защищены.
-					</Typography>
-				</Box>
-			</Container>
-		</Box>
-	);
+const Footer = () => {
+  const currentYear = new Date().getFullYear();
+  
+  return (
+    <footer className="bg-gray-900 text-white">
+      <div className="container-custom pt-16 pb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Company Info */}
+          <div>
+            <h3 className="text-xl font-bold mb-4">ТурПро</h3>
+            <p className="text-gray-400 mb-4">
+              Мы помогаем нашим клиентам исследовать мир уже более 15 лет, 
+              предлагая незабываемые путешествия и профессиональное сопровождение.
+            </p>
+            <div className="flex space-x-4">
+              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <Facebook size={20} />
+              </a>
+              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <Instagram size={20} />
+              </a>
+              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <Twitter size={20} />
+              </a>
+            </div>
+          </div>
+          
+          {/* Quick Links */}
+          <div>
+            <h3 className="text-xl font-bold mb-4">Навигация</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link to="/" className="text-gray-400 hover:text-white transition-colors">
+                  Главная
+                </Link>
+              </li>
+              <li>
+                <Link to="/tours" className="text-gray-400 hover:text-white transition-colors">
+                  Туры
+                </Link>
+              </li>
+              <li>
+                <Link to="/about" className="text-gray-400 hover:text-white transition-colors">
+                  О нас
+                </Link>
+              </li>
+              <li>
+                <Link to="/login" className="text-gray-400 hover:text-white transition-colors">
+                  Личный кабинет
+                </Link>
+              </li>
+            </ul>
+          </div>
+          
+          {/* Popular Tours */}
+          <div>
+            <h3 className="text-xl font-bold mb-4">Популярные туры</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link to="/tours/kavkaz" className="text-gray-400 hover:text-white transition-colors">
+                  Горы Кавказа
+                </Link>
+              </li>
+              <li>
+                <Link to="/tours/baikal" className="text-gray-400 hover:text-white transition-colors">
+                  Байкал
+                </Link>
+              </li>
+              <li>
+                <Link to="/tours/altai" className="text-gray-400 hover:text-white transition-colors">
+                  Алтай
+                </Link>
+              </li>
+              <li>
+                <Link to="/tours/golden-ring" className="text-gray-400 hover:text-white transition-colors">
+                  Золотое кольцо
+                </Link>
+              </li>
+            </ul>
+          </div>
+          
+          {/* Contact Info */}
+          <div>
+            <h3 className="text-xl font-bold mb-4">Контакты</h3>
+            <ul className="space-y-4">
+              <li className="flex items-start">
+                <MapPin size={20} className="mr-2 text-blue-400 flex-shrink-0 mt-1" />
+                <span className="text-gray-400">г. Москва, ул. Туристическая, д. 123</span>
+              </li>
+              <li className="flex items-center">
+                <Phone size={20} className="mr-2 text-blue-400 flex-shrink-0" />
+                <span className="text-gray-400">+7 (495) 123-45-67</span>
+              </li>
+              <li className="flex items-center">
+                <Mail size={20} className="mr-2 text-blue-400 flex-shrink-0" />
+                <span className="text-gray-400">info@tourpro.ru</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        
+        <div className="border-t border-gray-800 mt-12 pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <p className="text-gray-500 text-sm">
+              © {currentYear} ТурПро. Все права защищены.
+            </p>
+            <div className="flex space-x-6 mt-4 md:mt-0">
+              <Link to="/privacy" className="text-gray-500 hover:text-white text-sm">
+                Политика конфиденциальности
+              </Link>
+              <Link to="/terms" className="text-gray-500 hover:text-white text-sm">
+                Условия использования
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
 };
 
 export default Footer;

@@ -1,71 +1,53 @@
-import { Box, Typography, Button } from "@mui/material";
-import { Link } from "react-router-dom";
-import type { Tour } from "../types/tour";
+import { Link } from 'react-router-dom';
+import { Calendar, Clock, DollarSign } from 'lucide-react';
+import { Tour } from '../types/tour';
 
-type Props = {
-	tour: Tour;
+interface TourCardProps {
+  tour: Tour;
+}
+
+const TourCard = ({ tour }: TourCardProps) => {
+  return (
+    <div className="card tour-card group">
+      <div className="relative">
+        <img 
+          src={tour.image} 
+          alt={tour.title} 
+          className="w-full h-48 object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      </div>
+      <div className="p-4">
+        <h3 className="text-lg font-semibold mb-2">{tour.title}</h3>
+        <p className="text-gray-600 text-sm mb-4 line-clamp-2">{tour.desc}</p>
+        
+        <div className="space-y-2 mb-4">
+          <div className="flex items-center text-sm text-gray-500">
+            <Calendar size={16} className="mr-2 text-blue-500" />
+            <span>{new Date(tour.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+          </div>
+          <div className="flex items-center text-sm text-gray-500">
+            <Clock size={16} className="mr-2 text-blue-500" />
+            <span>{tour.duration}</span>
+          </div>
+          <div className="flex items-center text-sm font-medium text-gray-900">
+            <DollarSign size={16} className="mr-2 text-blue-500" />
+            <span>{tour.price.toLocaleString('ru-RU')} ₽</span>
+          </div>
+        </div>
+        
+        <div className="flex justify-between items-center">
+          <Link 
+            to={`/tours/${tour.link.split('/').pop()}`}
+            className="text-blue-600 font-medium text-sm hover:text-blue-700"
+          >
+            Подробнее
+          </Link>
+          <button className="btn btn-secondary text-sm">Забронировать</button>
+        </div>
+      </div>
+    </div>
+  );
 };
 
-export default function TourCard({ tour }: Props) {
-	return (
-		<Box
-			sx={{
-				bgcolor: "rgba(255,255,255,0.9)",
-				borderRadius: 3,
-				boxShadow: "0 6px 20px rgba(0,0,0,0.15)",
-				overflow: "hidden",
-				display: "flex",
-				flexDirection: "column",
-				height: "100%",
-				transition: "transform 0.3s, box-shadow 0.3s",
-				"&:hover": {
-					transform: "scale(1.03)",
-					boxShadow: "0 12px 30px rgba(0,0,0,0.3)",
-				},
-			}}>
-			<Box
-				component='img'
-				src={tour.image}
-				alt={tour.title}
-				sx={{
-					height: 180,
-					width: "100%",
-					objectFit: "cover",
-					borderBottomLeftRadius: 3,
-					borderBottomRightRadius: 3,
-				}}
-			/>
-			<Box sx={{ p: 3, flexGrow: 1, display: "flex", flexDirection: "column" }}>
-				<Typography
-					variant='h6'
-					gutterBottom>
-					{tour.title}
-				</Typography>
-				<Typography
-					variant='body2'
-					sx={{ flexGrow: 1, mb: 1, color: "#555" }}>
-					{tour.desc}
-				</Typography>
-				<Typography
-					variant='body2'
-					sx={{ fontWeight: "bold" }}>
-					Дата: {new Date(tour.date).toLocaleDateString("ru-RU")} в {tour.time}
-				</Typography>
-				<Typography variant='body2'>Длительность: {tour.duration}</Typography>
-				<Typography
-					variant='body1'
-					sx={{ mt: 1, fontWeight: "bold", color: "#1976d2" }}>
-					Цена: {tour.price.toLocaleString("ru-RU")} ₽
-				</Typography>
-				<Button
-					component={Link}
-					to={tour.link}
-					variant='contained'
-					sx={{ mt: 2 }}
-					fullWidth>
-					Оформить
-				</Button>
-			</Box>
-		</Box>
-	);
-}
+export default TourCard;

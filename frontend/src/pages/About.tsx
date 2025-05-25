@@ -1,227 +1,351 @@
-import { Box, Typography, Button, Avatar, Grid } from "@mui/material";
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
+import { MapPin, Calendar, Users, Phone, Mail, Clock, Award, ThumbsUp } from 'lucide-react';
 
-import SupportAgentIcon from "@mui/icons-material/SupportAgent";
-import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
-import LanguageIcon from "@mui/icons-material/Language";
+const About = () => {
+  return (
+    <div className="fade-in">
+      {/* Hero Section */}
+      <section className="relative py-16 md:py-24 bg-blue-700">
+        <div className="absolute inset-0 opacity-20">
+          <img 
+            src="https://images.pexels.com/photos/2159065/pexels-photo-2159065.jpeg" 
+            alt="About us hero" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="container-custom relative z-10">
+          <div className="max-w-2xl">
+            <h1 className="text-white mb-4">О нашей компании</h1>
+            <p className="text-blue-100 text-lg">
+              Мы создаем незабываемые путешествия с 2008 года, помогая тысячам туристов открывать для себя удивительные места России и мира
+            </p>
+          </div>
+        </div>
+      </section>
+      
+      {/* Company History */}
+      <section className="section bg-white">
+        <div className="container-custom">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="mb-6">Наша история</h2>
+              <p className="text-gray-700 mb-4">
+                История компании «ТурПро» началась в 2008 году, когда группа энтузиастов-путешественников решила превратить свою страсть к исследованию мира в профессию. Изначально небольшое турагентство с тремя сотрудниками, сегодня мы выросли в крупную туристическую компанию с офисами в нескольких городах России.
+              </p>
+              <p className="text-gray-700 mb-4">
+                Мы начинали с организации небольших групповых туров по Золотому кольцу, но постепенно расширяли географию своих маршрутов. К 2015 году мы уже предлагали широкий спектр внутренних туров по всей России – от Калининграда до Камчатки.
+              </p>
+              <p className="text-gray-700">
+                Сегодня «ТурПро» – это признанный эксперт в области внутреннего туризма, компания с безупречной репутацией и тысячами довольных клиентов, которые возвращаются к нам снова и снова.
+              </p>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="relative h-96 rounded-xl overflow-hidden shadow-xl"
+            >
+              <img 
+                src="https://images.pexels.com/photos/5764100/pexels-photo-5764100.jpeg" 
+                alt="Our team" 
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Mission & Values */}
+      <section className="section bg-gray-50">
+        <div className="container-custom">
+          <div className="text-center mb-12">
+            <h2 className="mb-4">Наша миссия и ценности</h2>
+            <p className="text-gray-600 max-w-3xl mx-auto">
+              Мы стремимся не просто организовывать поездки, а создавать уникальные путешествия, 
+              которые расширяют кругозор, дарят яркие эмоции и остаются в памяти на долгие годы
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="bg-white p-6 rounded-xl shadow-md"
+            >
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                <Award className="text-blue-600" size={32} />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Качество</h3>
+              <p className="text-gray-600">
+                Мы не идем на компромиссы, когда речь идет о качестве наших услуг. Тщательно подбираем партнеров, 
+                отели и транспортные компании, чтобы обеспечить максимальный комфорт нашим клиентам.
+              </p>
+            </motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="bg-white p-6 rounded-xl shadow-md"
+            >
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                <ThumbsUp className="text-blue-600" size={32} />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Надежность</h3>
+              <p className="text-gray-600">
+                Клиенты доверяют нам самое ценное – свое время и впечатления. Мы дорожим этим доверием 
+                и делаем все возможное, чтобы оправдать и превзойти ожидания каждого путешественника.
+              </p>
+            </motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              viewport={{ once: true }}
+              className="bg-white p-6 rounded-xl shadow-md"
+            >
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                <Users className="text-blue-600" size={32} />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Индивидуальный подход</h3>
+              <p className="text-gray-600">
+                Мы понимаем, что каждый путешественник уникален. Поэтому предлагаем гибкие 
+                программы туров и всегда готовы адаптировать маршрут под пожелания конкретного клиента.
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Team Section */}
+      <section className="section bg-white">
+        <div className="container-custom">
+          <div className="text-center mb-12">
+            <h2 className="mb-4">Наша команда</h2>
+            <p className="text-gray-600 max-w-3xl mx-auto">
+              За каждым успешным путешествием стоит команда профессионалов, влюбленных в свое дело
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4 }}
+              viewport={{ once: true }}
+              className="text-center"
+            >
+              <div className="relative h-64 rounded-xl overflow-hidden mb-4">
+                <img 
+                  src="https://images.pexels.com/photos/5384445/pexels-photo-5384445.jpeg" 
+                  alt="Анна Смирнова" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h3 className="text-xl font-semibold">Анна Смирнова</h3>
+              <p className="text-blue-600 mb-2">Генеральный директор</p>
+              <p className="text-gray-600 text-sm">
+                Основатель компании с более чем 15-летним опытом в туристической индустрии
+              </p>
+            </motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="text-center"
+            >
+              <div className="relative h-64 rounded-xl overflow-hidden mb-4">
+                <img 
+                  src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg" 
+                  alt="Михаил Петров" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h3 className="text-xl font-semibold">Михаил Петров</h3>
+              <p className="text-blue-600 mb-2">Руководитель направления</p>
+              <p className="text-gray-600 text-sm">
+                Эксперт по внутреннему туризму и активному отдыху в России
+              </p>
+            </motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="text-center"
+            >
+              <div className="relative h-64 rounded-xl overflow-hidden mb-4">
+                <img 
+                  src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg" 
+                  alt="Елена Иванова" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h3 className="text-xl font-semibold">Елена Иванова</h3>
+              <p className="text-blue-600 mb-2">Главный менеджер</p>
+              <p className="text-gray-600 text-sm">
+                Специалист по VIP-турам и индивидуальным маршрутам
+              </p>
+            </motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, delay: 0.3 }}
+              viewport={{ once: true }}
+              className="text-center"
+            >
+              <div className="relative h-64 rounded-xl overflow-hidden mb-4">
+                <img 
+                  src="https://images.pexels.com/photos/1181391/pexels-photo-1181391.jpeg" 
+                  alt="Алексей Козлов" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h3 className="text-xl font-semibold">Алексей Козлов</h3>
+              <p className="text-blue-600 mb-2">Ведущий гид</p>
+              <p className="text-gray-600 text-sm">
+                Профессиональный гид с опытом работы более 10 лет
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Contact Info */}
+      <section className="section bg-blue-50">
+        <div className="container-custom">
+          <div className="text-center mb-12">
+            <h2 className="mb-4">Свяжитесь с нами</h2>
+            <p className="text-gray-600 max-w-3xl mx-auto">
+              Наши менеджеры всегда готовы ответить на ваши вопросы и помочь с выбором подходящего тура
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <div className="bg-white p-8 rounded-xl shadow-md">
+                <div className="space-y-6">
+                  <div className="flex items-start">
+                    <div className="bg-blue-100 p-3 rounded-full mr-4">
+                      <MapPin className="text-blue-600" size={24} />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold mb-1">Адрес</h3>
+                      <p className="text-gray-600">г. Москва, ул. Туристическая, д. 123</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start">
+                    <div className="bg-blue-100 p-3 rounded-full mr-4">
+                      <Phone className="text-blue-600" size={24} />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold mb-1">Телефон</h3>
+                      <p className="text-gray-600">+7 (495) 123-45-67</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start">
+                    <div className="bg-blue-100 p-3 rounded-full mr-4">
+                      <Mail className="text-blue-600" size={24} />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold mb-1">Email</h3>
+                      <p className="text-gray-600">info@tourpro.ru</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start">
+                    <div className="bg-blue-100 p-3 rounded-full mr-4">
+                      <Clock className="text-blue-600" size={24} />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold mb-1">Часы работы</h3>
+                      <p className="text-gray-600">Пн-Пт: 9:00 - 20:00</p>
+                      <p className="text-gray-600">Сб: 10:00 - 18:00</p>
+                      <p className="text-gray-600">Вс: выходной</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              <div className="bg-white p-8 rounded-xl shadow-md">
+                <h3 className="text-xl font-semibold mb-6">Напишите нам</h3>
+                
+                <form className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Ваше имя
+                    </label>
+                    <input 
+                      type="text" 
+                      className="w-full border border-gray-300 rounded-md px-3 py-2"
+                      placeholder="Иван Иванов"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Email
+                    </label>
+                    <input 
+                      type="email" 
+                      className="w-full border border-gray-300 rounded-md px-3 py-2"
+                      placeholder="ivan@example.com"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Сообщение
+                    </label>
+                    <textarea 
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 h-32"
+                      placeholder="Ваш вопрос или комментарий..."
+                    ></textarea>
+                  </div>
+                  
+                  <button 
+                    type="submit" 
+                    className="btn btn-primary w-full"
+                  >
+                    Отправить
+                  </button>
+                </form>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
 
-import {
-	containerVariants,
-	itemVariantsDown,
-} from "../animations/motionVariants";
-import type { AboutPageTeam, Feature } from "../types/tour";
-
-import { Link } from "react-router-dom";
-
-const aboutFeatures: Feature[] = [
-	{
-		icon: <LanguageIcon sx={{ fontSize: 40, color: "#1976d2" }} />,
-		title: "Глобальный охват",
-		desc: "Туры по России и всему миру с проверенными партнёрами.",
-	},
-	{
-		icon: <FlightTakeoffIcon sx={{ fontSize: 40, color: "#1976d2" }} />,
-		title: "Быстрое бронирование",
-		desc: "Онлайн-оформление туров за пару минут без бумажной волокиты.",
-	},
-	{
-		icon: <SupportAgentIcon sx={{ fontSize: 40, color: "#1976d2" }} />,
-		title: "Поддержка 24/7",
-		desc: "Профессиональная помощь в любое время суток.",
-	},
-];
-
-const team: AboutPageTeam[] = [
-	{
-		name: "Анна Иванова",
-		role: "Менеджер по туризму",
-		avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-	},
-	{
-		name: "Иван Петров",
-		role: "Технический директор",
-		avatar: "https://randomuser.me/api/portraits/men/46.jpg",
-	},
-	{
-		name: "Мария Ким",
-		role: "Специалист поддержки",
-		avatar: "https://randomuser.me/api/portraits/women/48.jpg",
-	},
-];
-
-export default function About() {
-	return (
-		<Box
-			component='main'
-			sx={{ px: { xs: 2, md: 6 }, py: 6, maxWidth: 1200, mx: "auto" }}>
-			{/* Миссия */}
-			<motion.section
-				variants={containerVariants}
-				initial='hidden'
-				whileInView='visible'
-				viewport={{ once: true, amount: 0.3 }}
-				style={{ marginBottom: 60, textAlign: "center" }}>
-				<motion.div variants={itemVariantsDown}>
-					<Typography
-						variant='h3'
-						gutterBottom
-						sx={{ fontWeight: "bold" }}>
-						Наша миссия
-					</Typography>
-				</motion.div>
-				<motion.div variants={itemVariantsDown}>
-					<Typography
-						variant='h6'
-						color='text.secondary'
-						sx={{ maxWidth: 800, mx: "auto" }}>
-						Мы стремимся сделать путешествия доступными, безопасными и
-						незабываемыми для каждого, предоставляя качественные туры и сервис с
-						вниманием к деталям.
-					</Typography>
-				</motion.div>
-			</motion.section>
-
-			<motion.section
-				variants={containerVariants}
-				initial='hidden'
-				whileInView='visible'
-				viewport={{ once: true, amount: 0.3 }}
-				style={{ marginBottom: 60 }}>
-				<motion.div variants={itemVariantsDown}>
-					<Typography
-						variant='h4'
-						gutterBottom
-						sx={{ textAlign: "center", mb: 4 }}>
-						Почему выбирают нас
-					</Typography>
-				</motion.div>
-				<Grid
-					container
-					spacing={4}
-					justifyContent='center'>
-					{aboutFeatures.map((feature, i) => (
-						<motion.div
-							key={i}
-							variants={itemVariantsDown}>
-							<Box
-								sx={{
-									bgcolor: "#f0f4ff",
-									p: 4,
-									borderRadius: 3,
-									textAlign: "center",
-									boxShadow: "0 6px 20px rgba(25, 118, 210, 0.2)",
-									transition: "transform 0.3s",
-									"&:hover": {
-										transform: "translateY(-10px)",
-										boxShadow: "0 10px 30px rgba(25, 118, 210, 0.35)",
-									},
-								}}>
-								<Box sx={{ mb: 2 }}>{feature.icon}</Box>
-								<Typography
-									variant='h6'
-									gutterBottom>
-									{feature.title}
-								</Typography>
-								<Typography
-									variant='body1'
-									color='text.secondary'>
-									{feature.desc}
-								</Typography>
-							</Box>
-						</motion.div>
-					))}
-				</Grid>
-			</motion.section>
-
-			<motion.section
-				variants={containerVariants}
-				initial='hidden'
-				whileInView='visible'
-				viewport={{ once: true, amount: 0.3 }}
-				style={{ marginBottom: 60 }}>
-				<motion.div variants={itemVariantsDown}>
-					<Typography
-						variant='h4'
-						gutterBottom
-						sx={{ textAlign: "center", mb: 4 }}>
-						Наша команда
-					</Typography>
-				</motion.div>
-				<Grid
-					container
-					spacing={6}
-					justifyContent='center'>
-					{team.map(({ name, role, avatar }, i) => (
-						<motion.div
-							key={i}
-							variants={itemVariantsDown}>
-							<Box
-								sx={{
-									width: 220,
-									bgcolor: "#e3f2fd",
-									p: 3,
-									borderRadius: 4,
-									textAlign: "center",
-									boxShadow: "0 6px 20px rgba(25, 118, 210, 0.15)",
-									transition: "transform 0.3s",
-									cursor: "default",
-									"&:hover": {
-										transform: "translateY(-8px)",
-										boxShadow: "0 10px 30px rgba(25, 118, 210, 0.25)",
-									},
-								}}>
-								<Avatar
-									alt={name}
-									src={avatar}
-									sx={{ width: 100, height: 100, mx: "auto", mb: 2 }}
-								/>
-								<Typography
-									variant='h6'
-									fontWeight='bold'>
-									{name}
-								</Typography>
-								<Typography
-									variant='body2'
-									color='text.secondary'>
-									{role}
-								</Typography>
-							</Box>
-						</motion.div>
-					))}
-				</Grid>
-			</motion.section>
-
-			<motion.section
-				variants={containerVariants}
-				initial='hidden'
-				whileInView='visible'
-				viewport={{ once: true, amount: 0.3 }}>
-				<motion.div variants={itemVariantsDown}>
-					<Box sx={{ textAlign: "center" }}>
-						<Typography
-							variant='h4'
-							gutterBottom>
-							Готовы начать путешествие?
-						</Typography>
-						<Button
-							variant='contained'
-							size='large'
-							component={Link}
-							to='/tours'
-							sx={{
-								mt: 4,
-								maxWidth: 225,
-								transition: "transform 0.3s",
-								bgcolor: "#1876D1",
-								"&:hover": {
-									transform: "scale(1.05)",
-								},
-							}}>
-							Посмотреть туры
-						</Button>
-					</Box>
-				</motion.div>
-			</motion.section>
-		</Box>
-	);
-}
+export default About;

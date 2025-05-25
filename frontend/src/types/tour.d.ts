@@ -1,30 +1,28 @@
-import { ReactElement } from "react";
-
-export type TourHome = {
-	title: string;
-	desc: string;
-	link?: string;
-};
-
-export type Feature = {
-	icon: ReactElement;
-	title: string;
-	desc: string;
-};
-
-export type AboutPageTeam = {
-	name: string;
-	role: string;
-	avatar: string;
-};
-
-export type Tour = {
-	title: string;
-	date: string;
-	time: string;
-	duration: string;
-	price: number;
-	desc: string;
-	link: string;
-	image: string;
-};
+export interface Tour {
+  _id: string;
+  title: string;
+  date: string;
+  time: string;
+  duration: string;
+  price: number;
+  desc: string;
+  link: string;
+  image: string;
+  location?: string;
+  maxParticipants?: number;
+  included?: string[];
+  excluded?: string[];
+  highlights?: string[];
+  itinerary?: {
+    day: number;
+    title: string;
+    description: string;
+  }[];
+  rating?: number;
+  reviews?: {
+    user: string;
+    rating: number;
+    comment: string;
+    date: string;
+  }[];
+}

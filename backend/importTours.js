@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Tour = require("./models/Tour");
 const toursData = require("./data/tours.json");
 
-mongoose.connect("mongodb://localhost:27017/tours", {
+mongoose.connect("mongodb://localhost:27017/data", {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 });

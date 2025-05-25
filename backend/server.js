@@ -27,7 +27,7 @@ app.get("/api/tours", async (req, res) => {
 });
 
 mongoose
-	.connect("mongodb://localhost:27017/tourapp")
+	.connect("mongodb://localhost:27017/data")
 	.then(() => {
 		console.log("MongoDB подключена");
 		app.listen(PORT, () => {

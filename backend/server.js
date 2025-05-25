@@ -3,18 +3,20 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const Tour = require("./models/Tour");
+const authRoutes = require("./routes/auth"); // маршруты регистрации
+
 const app = express();
 const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
 
-// Тестовый маршрут
+app.use("/api", authRoutes);
+
 app.get("/", (req, res) => {
 	res.send("API работает!");
 });
 
-// Основной маршрут с турами
 app.get("/api/tours", async (req, res) => {
 	try {
 		const tours = await Tour.find();

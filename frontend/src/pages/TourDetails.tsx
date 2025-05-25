@@ -32,7 +32,7 @@ const TourDetails = () => {
           console.error('API error, falling back to local data:', apiError);
           
           // Fallback to local data if API fails
-          const response = await fetch('/data/tours.json');
+          const response = await fetch('http://localhost:3000/api/tours');
           if (!response.ok) {
             throw new Error('Не удалось загрузить данные');
           }
@@ -139,7 +139,7 @@ const TourDetails = () => {
           className="container-custom relative z-10 h-full flex flex-col justify-end pb-16"
         >
           <div className="text-white max-w-3xl">
-            <h1 className="text-shadow-lg mb-4">{tour.title}</h1>
+            <h1 className="text-shadow-lg mb-4 text-white">{tour.title}</h1>
             <div className="flex flex-wrap gap-6 text-sm md:text-base">
               <div className="flex items-center">
                 <Calendar size={20} className="mr-2 text-blue-300" />
@@ -473,7 +473,7 @@ const TourDetails = () => {
             >
               <div className="relative">
                 <img 
-                  src="https://images.pexels.com/photos/1271619/pexels-photo-1271619.jpeg" 
+                  src="https://imcdn.bolshayastrana.com/1200x410/BS_f16a2de4845fe4af095b2d2946b847addd57abc34a71b41b97456c65eaa6a0f0.jpeg" 
                   alt="Алтай" 
                   className="w-full h-48 object-cover"
                 />
@@ -501,7 +501,7 @@ const TourDetails = () => {
             >
               <div className="relative">
                 <img 
-                  src="https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg" 
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRoWdJERvhlaoR6ShM4bER03Nic9Dvm_VeIkA&s" 
                   alt="Байкал" 
                   className="w-full h-48 object-cover"
                 />
@@ -529,7 +529,7 @@ const TourDetails = () => {
             >
               <div className="relative">
                 <img 
-                  src="https://images.pexels.com/photos/346885/pexels-photo-346885.jpeg" 
+                  src="https://icdn.bolshayastrana.com/1200x410/df/95/df9512bfbf16d25612ebc390b2bce93c.jpeg" 
                   alt="Золотое кольцо" 
                   className="w-full h-48 object-cover"
                 />

@@ -16,15 +16,27 @@ import Button from "@mui/material/Button";
 
 import { Link } from "react-router-dom";
 
-const navItems = [
+const navItemsAuth = [
 	{ label: "Главная", path: "/" },
 	{ label: "О нас", path: "/about" },
 	{ label: "Туры", path: "/tours" },
-	{ label: "Контакты", path: "/contacts" },
+	{ label: "Мои туры", path: "/my-tours" },
+	{ label: "Профиль", path: "/profile" },
+	{ label: "Выйти", path: "/logout" },
+];
+
+const navItemsGuest = [
+	{ label: "Главная", path: "/" },
+	{ label: "О нас", path: "/about" },
+	{ label: "Туры", path: "/tours" },
+	{ label: "Вход", path: "/login" },
+	{ label: "Регистрация", path: "/register" },
 ];
 
 export default function DrawerAppBar() {
 	const [mobileOpen, setMobileOpen] = React.useState(false);
+	const isAuthenticated = false; // заменишь потом на реальную логику
+	const navItems = isAuthenticated ? navItemsAuth : navItemsGuest;
 
 	const handleDrawerToggle = () => {
 		setMobileOpen((prevState) => !prevState);
@@ -101,9 +113,7 @@ export default function DrawerAppBar() {
 					anchor='right'
 					open={mobileOpen}
 					onClose={handleDrawerToggle}
-					ModalProps={{
-						keepMounted: true,
-					}}
+					ModalProps={{ keepMounted: true }}
 					sx={{
 						display: { xs: "block", sm: "none" },
 						"& .MuiDrawer-paper": { width: 240 },

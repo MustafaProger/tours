@@ -1,0 +1,152 @@
+[
+	{
+		"title": "Горы Кавказа",
+		"date": "2025-07-10",
+		"time": "09:00",
+		"duration": "7 дней",
+		"price": 35000,
+		"desc": "Незабываемое приключение в сердце природы Кавказа.",
+		"link": "/tours/kavkaz",
+		"image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfcPBjfec03x-bUGnY7fXgDOZdxcR4EX9czQ&s"
+	},
+	{
+		"title": "Золотое кольцо",
+		"date": "2025-08-15",
+		"time": "08:30",
+		"duration": "5 дней",
+		"price": 27000,
+		"desc": "Историческое путешествие по древним городам Золотого кольца.",
+		"link": "/tours/kolco",
+		"image": "https://icdn.bolshayastrana.com/1200x410/df/95/df9512bfbf16d25612ebc390b2bce93c.jpeg"
+	},
+	{
+		"title": "Байкал",
+		"date": "2025-09-01",
+		"time": "10:00",
+		"duration": "6 дней",
+		"price": 40000,
+		"desc": "Открой глубину самого чистого озера мира — Байкал.",
+		"link": "/tours/baikal",
+		"image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRoWdJERvhlaoR6ShM4bER03Nic9Dvm_VeIkA&s"
+	},
+	{
+		"title": "Алтайские горы",
+		"date": "2025-10-01",
+		"time": "11:00",
+		"duration": "8 дней",
+		"price": 45000,
+		"desc": "Уникальные пейзажи и походы по Алтаю.",
+		"link": "/tours/altai",
+		"image": "https://imcdn.bolshayastrana.com/1200x410/BS_f16a2de4845fe4af095b2d2946b847addd57abc34a71b41b97456c65eaa6a0f0.jpeg"
+	},
+	{
+		"title": "Сочи и Черноморское побережье",
+		"date": "2025-07-20",
+		"time": "09:30",
+		"duration": "5 дней",
+		"price": 30000,
+		"desc": "Отдых на Черном море в Сочи.",
+		"link": "/tours/sochi",
+		"image": "https://greenbag62.ru/wp-content/uploads/2023/08/architecture-5297373_1280.jpg"
+	},
+	{
+		"title": "Камчатка",
+		"date": "2025-09-15",
+		"time": "08:00",
+		"duration": "10 дней",
+		"price": 60000,
+		"desc": "Путешествие в край вулканов и гейзеров.",
+		"link": "/tours/kamchatka",
+		"image": "https://www.russiadiscovery.ru/storage/orig/posts/904/Kamchatka_1%282%29.jpg"
+	},
+	{
+		"title": "Санкт-Петербург",
+		"date": "2025-10-05",
+		"time": "09:00",
+		"duration": "4 дня",
+		"price": 35000,
+		"desc": "Культурная столица России с богатой историей и архитектурой.",
+		"link": "/tours/spb",
+		"image": "https://byvali.ru/sites/default/files/pictures/russia/sankt-peterburg/_obshaya/mosty.jpg"
+	},
+	{
+		"title": "Калининград",
+		"date": "2025-10-20",
+		"time": "07:30",
+		"duration": "6 дней",
+		"price": 32000,
+		"desc": "Уникальный город с европейским колоритом.",
+		"link": "/tours/kaliningrad",
+		"image": "https://путешествуем.рф/_next/image?url=https%3A%2F%2Fxn--b1afab9anqfdfg9c.xn--p1ai%2Fmedia%2Fimages%2FRybnaya_derevn.format-webp.max-2000x2000.jpegquality-80.webp&w=3840&q=75"
+	},
+	{
+		"title": "Владивосток",
+		"date": "2025-11-01",
+		"time": "09:00",
+		"duration": "5 дней",
+		"price": 37000,
+		"desc": "Город на Дальнем Востоке с морским климатом и японским влиянием.",
+		"link": "/tours/vladivostok",
+		"image": "https://fs.tonkosti.ru/sized/c1600x600/6i/d2/6id2pxedmbs4wo8cw8go8ck80.jpg"
+	},
+	{
+		"title": "Калуга",
+		"date": "2025-11-10",
+		"time": "08:30",
+		"duration": "3 дня",
+		"price": 22000,
+		"desc": "Город с историей космонавтики и старинной архитектурой.",
+		"link": "/tours/kaluga",
+		"image": "https://cdn5.vedomosti.ru/image/2022/2n/wkas1/original-167a.jpg"
+	},
+	{
+		"title": "Сибирь",
+		"date": "2025-11-20",
+		"time": "10:00",
+		"duration": "12 дней",
+		"price": 70000,
+		"desc": "Просторы Сибири с озером Байкал и уникальной природой.",
+		"link": "/tours/siberia",
+		"image": "https://shansonline.ru/media/k2/items/cache/f2c12f343e401cbf015bfd658d56f4e7_XL.jpg"
+	},
+	{
+		"title": "Карелия",
+		"date": "2025-12-01",
+		"time": "09:00",
+		"duration": "7 дней",
+		"price": 38000,
+		"desc": "Природные красоты и озера Карелии.",
+		"link": "/tours/karelia",
+		"image": "https://petrozavodsk.sutochno.ru/doc/images/galleries/180/kar-lake1.jpg"
+	},
+	{
+		"title": "Крым",
+		"date": "2025-12-10",
+		"time": "08:00",
+		"duration": "6 дней",
+		"price": 33000,
+		"desc": "Исторические места и пляжи Черного моря.",
+		"link": "/tours/crimea",
+		"image": "https://tripplanet.ru/wp-content/uploads/europe/crimea/luchshie-dostoprimechatelnosti-kryma.jpg"
+	},
+	{
+		"title": "Залив Петра Великого",
+		"date": "2025-12-20",
+		"time": "09:30",
+		"duration": "4 дня",
+		"price": 28000,
+		"desc": "Красивый залив на Дальнем Востоке России.",
+		"link": "/tours/petr-great-bay",
+		"image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqHAy5o4WD4sRs6TEMxCG3zp7r3l3ulhN2zQ&s"
+	},
+	{
+		"title": "Москва",
+		"date": "2025-12-25",
+		"time": "10:00",
+		"duration": "3 дня",
+		"price": 30000,
+		"desc": "Столица России с её главными достопримечательностями.",
+		"link": "/tours/moscow",
+		"image": "https://путешествуем.рф/_next/image?url=https%3A%2F%2Fxn--b1afab9anqfdfg9c.xn--p1ai%2Fmedia%2Fimages%2F1.Moskva.Zakho.format-webp.max-2000x2000.jpegquality-80.webp&w=3840&q=75"
+	}
+]

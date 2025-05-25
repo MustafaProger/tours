@@ -7,13 +7,13 @@ import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import LanguageIcon from "@mui/icons-material/Language";
 
-import type { Tour, Feature } from "../types/tour";
+import type { TourHome, Feature } from "../types/tour";
 import {
 	containerVariants,
 	itemVariantsDown,
 } from "../animations/motionVariants";
 
-const tours: Tour[] = [
+const tours: TourHome[] = [
 	{
 		title: "Горы Кавказа",
 		desc: "Незабываемое приключение в сердце природы.",

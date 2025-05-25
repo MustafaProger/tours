@@ -100,6 +100,17 @@ export const authApi = {
 			throw error;
 		}
 	},
+
+	confirmCode: async (email: string, code: string) => {
+		try {
+			const response = await api.post("/auth/confirm", { email, code });
+			console.log(response.data)
+			return response.data;
+		} catch (error) {
+			console.error("Ошибка подтверждения:", error);
+			throw error;
+		}
+	},
 };
 
 // Booking API

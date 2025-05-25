@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const Tour = require("./models/Tour");
-const authRoutes = require("./routes/auth"); // маршруты регистрации
+const authRoutes = require("./routes/auth");
 
 const app = express();
 const PORT = 3000;
@@ -11,7 +11,7 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.json());
 
-app.use("/api", authRoutes);
+app.use("/api/auth", authRoutes);
 
 app.get("/", (req, res) => {
 	res.send("API работает!");
@@ -27,7 +27,7 @@ app.get("/api/tours", async (req, res) => {
 });
 
 mongoose
-	.connect("mongodb://localhost:27017/tours")
+	.connect("mongodb://localhost:27017/tourapp")
 	.then(() => {
 		console.log("MongoDB подключена");
 		app.listen(PORT, () => {

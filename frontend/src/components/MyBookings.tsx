@@ -144,7 +144,7 @@ const MyBookings: React.FC = () => {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 3, pt: 14 }}>
       <Box display="flex" alignItems="center" gap={1} sx={{ mb: 4 }}>
         <CalendarToday color="primary" />
         <Typography variant="h4" gutterBottom>

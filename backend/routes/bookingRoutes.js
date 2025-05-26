@@ -80,7 +80,8 @@ router.get('/my-bookings', protect, async (req, res) => {
   try {
     const bookings = await Booking.find({ 
       user: req.user.id,
-      cancelled: { $ne: true }
+      cancelled: { $ne: true },
+      paid: false
     })
     .populate({
       path: 'tour',
@@ -142,7 +143,6 @@ router.post('/:id/pay', protect, async (req, res) => {
   try {
     const booking = await Booking.findOne({
       _id: req.params.id,
-      user: req.user.id,
       cancelled: { $ne: true }
     }).populate({
       path: 'tour',
@@ -150,9 +150,32 @@ router.post('/:id/pay', protect, async (req, res) => {
     });
 
     if (!booking) {
+      console.log('PAYMENT DEBUG:', {
+        bookingId: req.params.id,
+        userFromToken: req.user.id,
+        bookingFound: !!booking,
+        bookingUser: null,
+        bookingUserId: null
+      });
       return res.status(404).json({
         status: 'error',
         error: 'Бронирование не найдено'
+      });
+    }
+
+    // Корректное сравнение user
+    const bookingUserId = booking.user._id ? booking.user._id.toString() : booking.user.toString();
+    console.log('PAYMENT DEBUG:', {
+      bookingId: req.params.id,
+      userFromToken: req.user.id,
+      bookingFound: !!booking,
+      bookingUser: booking.user,
+      bookingUserId
+    });
+    if (bookingUserId !== req.user.id.toString()) {
+      return res.status(403).json({
+        status: 'error',
+        error: 'Нет доступа к этому бронированию'
       });
     }
 

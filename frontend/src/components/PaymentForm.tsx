@@ -273,6 +273,18 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ open, onClose, booking, onSuc
                 </Typography>
               </div>
               <div className="flex items-center justify-between">
+                <Typography variant="body2" color="text.secondary">ID бронирования:</Typography>
+                <Typography variant="body2" className="font-medium">
+                  {booking._id}
+                </Typography>
+              </div>
+              <div className="flex items-center justify-between">
+                <Typography variant="body2" color="text.secondary">Ваш user._id:</Typography>
+                <Typography variant="body2" className="font-medium">
+                  {user?.id}
+                </Typography>
+              </div>
+              <div className="flex items-center justify-between">
                 <Typography variant="body2" color="text.secondary">
                   <Box display="flex" alignItems="center" gap={0.5}>
                     <LocationOn fontSize="small" />

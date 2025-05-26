@@ -46,7 +46,7 @@ const Dashboard = () => {
   return (
     <div className="fade-in">
       {/* Dashboard Header */}
-      <section className="bg-blue-700 py-12">
+      <section className="bg-blue-700 py-12 pt-32">
         <div className="container-custom">
           <h1 className="text-white mb-2">Личный кабинет</h1>
           <p className="text-blue-100">Добро пожаловать, {user.name}!</p>

@@ -21,47 +21,13 @@ export class APIError extends Error {
 // Tours API
 export const toursApi = {
 	getAllTours: async () => {
-		try {
-			const response = await api.get("/tours");
-			// Ensure we return the tours array, whether it's directly in data or nested
-			return Array.isArray(response.data) ? response.data : response.data.tours;
-		} catch (error) {
-			if (error instanceof AxiosError) {
-				if (!error.response) {
-					// Network error (API unreachable)
-					throw new APIError(
-						"Unable to reach the tour service. Please check your internet connection.",
-						undefined,
-						"NETWORK_ERROR"
-					);
-				}
-
-				// Server error
-				const status = error.response.status;
-				let message = "An error occurred while fetching tours.";
-
-				if (status === 404) {
-					message = "Tour service endpoint not found.";
-				} else if (status >= 500) {
-					message = "Tour service is currently unavailable.";
-				}
-
-				throw new APIError(message, status, error.code);
-			}
-
-			// Unknown error
-			throw new APIError("An unexpected error occurred while fetching tours.");
-		}
+		const response = await axios.get(`${API_URL}/tours`);
+		return response.data;
 	},
 
 	getTourById: async (id: string) => {
-		try {
-			const response = await api.get(`/tours/${id}`);
-			return response.data;
-		} catch (error) {
-			console.error(`Error fetching tour ${id}:`, error);
-			throw error;
-		}
+		const response = await axios.get(`${API_URL}/tours/${id}`);
+		return response.data;
 	},
 
 	filterTours: async (filters: any) => {
@@ -104,7 +70,7 @@ export const authApi = {
 	confirmCode: async (email: string, code: string) => {
 		try {
 			const response = await api.post("/auth/confirm", { email, code });
-			console.log(response.data)
+			console.log(response.data);
 			return response.data;
 		} catch (error) {
 			console.error("Ошибка подтверждения:", error);
@@ -125,9 +91,9 @@ export const bookingApi = {
 		}
 	},
 
-	getUserBookings: async (userId: string) => {
+	getUserBookings: async () => {
 		try {
-			const response = await api.get(`/bookings/user/${userId}`);
+			const response = await api.get("/bookings");
 			return response.data;
 		} catch (error) {
 			console.error("Error fetching user bookings:", error);

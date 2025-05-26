@@ -2,48 +2,27 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Tour } from '../types/tour';
 import { User, MapPin, Calendar, Trash2, Loader } from 'lucide-react';
+import { bookingService } from '../services/bookingService';
+import { Booking } from '../services/bookingService';
 
 const Dashboard = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('bookings');
-  const [bookings, setBookings] = useState<any[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    // In a real app, fetch user's bookings from API
     const fetchBookings = async () => {
       try {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Mock data
-        const mockBookings = [
-          {
-            id: '1',
-            tourId: 'kavkaz',
-            tourName: 'Горы Кавказа',
-            date: '2025-07-10',
-            persons: 2,
-            status: 'confirmed',
-            price: 35000 * 2,
-            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfcPBjfec03x-bUGnY7fXgDOZdxcR4EX9czQ&s'
-          },
-          {
-            id: '2',
-            tourId: 'baikal',
-            tourName: 'Озеро Байкал',
-            date: '2025-08-15',
-            persons: 1,
-            status: 'pending',
-            price: 49000,
-            image: 'https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg'
-          }
-        ];
-        
-        setBookings(mockBookings);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching bookings:', error);
+        setLoading(true);
+        const response = await bookingService.getMyBookings();
+        setBookings(response.data);
+        setError('');
+      } catch (err) {
+        setError('Не удалось загрузить бронирования');
+        console.error('Error fetching bookings:', err);
+      } finally {
         setLoading(false);
       }
     };
@@ -51,13 +30,17 @@ const Dashboard = () => {
     fetchBookings();
   }, []);
 
-  const handleCancelBooking = (id: string) => {
-    // In a real app, call API to cancel booking
-    setBookings(bookings.filter(booking => booking.id !== id));
+  const handleCancelBooking = async (id: string) => {
+    try {
+      await bookingService.cancelBooking(id);
+      setBookings(bookings.filter(booking => booking._id !== id));
+    } catch (err) {
+      setError('Не удалось отменить бронирование');
+    }
   };
 
   if (!user) {
-    return null; // Protected route should handle this
+    return null;
   }
 
   return (
@@ -178,6 +161,10 @@ const Dashboard = () => {
                       <Loader className="animate-spin mr-2 text-blue-600" size={24} />
                       <span>Загрузка бронирований...</span>
                     </div>
+                  ) : error ? (
+                    <div className="card p-8 text-center text-red-600">
+                      <p>{error}</p>
+                    </div>
                   ) : bookings.length === 0 ? (
                     <div className="card p-8 text-center">
                       <p className="text-gray-600 mb-4">У вас пока нет забронированных туров</p>
@@ -188,63 +175,59 @@ const Dashboard = () => {
                   ) : (
                     <div className="space-y-4">
                       {bookings.map(booking => (
-                        <div key={booking.id} className="card p-4 md:p-6">
+                        <div key={booking._id} className="card p-4 md:p-6">
                           <div className="flex flex-col md:flex-row gap-4">
                             <div className="md:w-1/4">
-                              <img src={booking.image} alt={booking.tourName} className="w-full h-32 object-cover rounded-md" />
+                              <img 
+                                src={booking.tour?.imageCover || booking.tour?.image || '/placeholder.jpg'} 
+                                alt={booking.tour?.title || 'Изображение тура'} 
+                                className="w-full h-32 object-cover rounded-md" 
+                              />
                             </div>
                             <div className="md:w-3/4">
                               <div className="flex flex-col md:flex-row justify-between mb-4">
-                                <h3 className="text-lg font-semibold">{booking.tourName}</h3>
+                                <h3 className="text-lg font-semibold">{booking.tour?.title || 'Без названия'}</h3>
                                 <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                  booking.status === 'confirmed' 
-                                    ? 'bg-green-100 text-green-800' 
-                                    : booking.status === 'pending'
-                                    ? 'bg-yellow-100 text-yellow-800'
-                                    : 'bg-red-100 text-red-800'
+                                  booking.paid ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                                 }`}>
-                                  {booking.status === 'confirmed' 
-                                    ? 'Подтверждено' 
-                                    : booking.status === 'pending'
-                                    ? 'Ожидает подтверждения'
-                                    : 'Отменено'}
+                                  {booking.paid ? 'Оплачено' : 'Ожидает оплаты'}
                                 </div>
                               </div>
-                              
-                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                 <div>
-                                  <p className="text-sm text-gray-500">Дата начала</p>
-                                  <p>{new Date(booking.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                                  <p className="text-sm text-gray-500">Дата бронирования:</p>
+                                  <p className="font-medium">
+                                    {new Date(booking.createdAt).toLocaleDateString('ru-RU')}
+                                  </p>
                                 </div>
-                                
                                 <div>
-                                  <p className="text-sm text-gray-500">Количество человек</p>
-                                  <p>{booking.persons}</p>
+                                  <p className="text-sm text-gray-500">Стоимость:</p>
+                                  <p className="font-medium">{booking.price?.toLocaleString('ru-RU') || '0'} ₽</p>
                                 </div>
-                                
                                 <div>
-                                  <p className="text-sm text-gray-500">Стоимость</p>
-                                  <p className="font-semibold">{booking.price.toLocaleString('ru-RU')} ₽</p>
+                                  <p className="text-sm text-gray-500">Дата тура:</p>
+                                  <p className="font-medium">
+                                    {booking.tour?.date ? new Date(booking.tour.date).toLocaleDateString('ru-RU') : '—'}
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-sm text-gray-500">Место проведения:</p>
+                                  <p className="font-medium">{booking.tour?.location || '—'}</p>
                                 </div>
                               </div>
-                              
-                              <div className="flex flex-wrap gap-2">
-                                <a 
-                                  href={`/tours/${booking.tourId}`}
-                                  className="btn btn-outline text-sm"
-                                >
-                                  Детали тура
-                                </a>
-                                
-                                {booking.status !== 'cancelled' && (
-                                  <button 
-                                    onClick={() => handleCancelBooking(booking.id)}
-                                    className="btn text-sm bg-red-50 text-red-600 hover:bg-red-100 flex items-center"
-                                  >
-                                    <Trash2 size={16} className="mr-1" />
-                                    Отменить
+                              <div className="flex justify-end space-x-3">
+                                {!booking.paid && (
+                                  <button className="btn btn-primary">
+                                    Оплатить
                                   </button>
                                 )}
+                                <button 
+                                  onClick={() => handleCancelBooking(booking._id)}
+                                  className="btn btn-outline-danger flex items-center"
+                                >
+                                  <Trash2 size={16} className="mr-1" />
+                                  Отменить
+                                </button>
                               </div>
                             </div>
                           </div>

@@ -10,10 +10,18 @@ import TourDetails from './pages/TourDetails';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import MyBookings from './components/MyBookings';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from "./other/ScrollToTop";
 import './App.css';
+
+const router = {
+  future: {
+    v7_startTransition: true,
+    v7_relativeSplatPath: true
+  }
+};
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -44,7 +52,7 @@ function App() {
 
   return (
     <AuthProvider>
-      <Router>
+      <Router {...router}>
         <ScrollToTop />
         <div className="flex flex-col min-h-screen">
           <Header />
@@ -62,6 +70,14 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <Dashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/my-bookings" 
+                  element={
+                    <ProtectedRoute>
+                      <MyBookings />
                     </ProtectedRoute>
                   } 
                 />

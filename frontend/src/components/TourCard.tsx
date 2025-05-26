@@ -1,12 +1,58 @@
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from "react-router-dom";
 import { Calendar, Clock, DollarSign } from "lucide-react";
 import { Tour } from "../types/tour";
+import { bookingService } from '../services/bookingService';
+import { useAuth } from '../context/AuthContext';
 
 interface TourCardProps {
 	tour: Tour;
 }
 
 const TourCard = ({ tour }: TourCardProps) => {
+	const [isBooking, setIsBooking] = useState(false);
+	const [error, setError] = useState('');
+	const { isAuthenticated } = useAuth();
+	const navigate = useNavigate();
+	const [hasBooking, setHasBooking] = useState(false);
+
+	useEffect(() => {
+		const checkBooking = async () => {
+			if (!isAuthenticated) return;
+			try {
+				const { data: bookings } = await bookingService.getMyBookings();
+				const found = bookings.some(b => b.tour?._id === tour._id && !b.paid);
+				setHasBooking(found);
+			} catch (e) {
+				setHasBooking(false);
+			}
+		};
+		checkBooking();
+	}, [isAuthenticated, tour._id]);
+
+	const handleBooking = async () => {
+		if (!isAuthenticated) {
+			navigate('/login');
+			return;
+		}
+
+		try {
+			setIsBooking(true);
+			setError('');
+			await bookingService.createBooking(tour._id);
+			alert('Тур успешно забронирован!');
+		} catch (err: any) {
+			console.error('Booking error:', err);
+			if (err.message === 'Необходима авторизация') {
+				navigate('/login');
+			} else {
+				setError(err.response?.data?.message || 'Ошибка при бронировании');
+			}
+		} finally {
+			setIsBooking(false);
+		}
+	};
+
 	return (
 		<div className='card tour-card group'>
 			<div className='relative'>
@@ -20,6 +66,9 @@ const TourCard = ({ tour }: TourCardProps) => {
 			<div className='p-4'>
 				<h3 className='text-lg font-semibold mb-2'>{tour.title}</h3>
 				<p className='text-gray-600 text-sm mb-4 line-clamp-2'>{tour.desc}</p>
+
+				{/* ВРЕМЕННО: выводим _id для отладки */}
+				<div className='text-xs text-gray-400 mb-2'>ID: {tour._id}</div>
 
 				<div className='space-y-2 mb-4'>
 					<div className='flex items-center text-sm text-gray-500'>
@@ -53,11 +102,18 @@ const TourCard = ({ tour }: TourCardProps) => {
 
 				<div className='flex justify-between items-center'>
 					<Link
-						to={`/tours/${tour.link.split("/").pop()}`}
+						to={`/tours/${tour._id}`}
 						className='text-blue-600 font-medium text-sm hover:text-blue-700'>
 						Подробнее
 					</Link>
-					<button className='btn btn-secondary text-sm'>Забронировать</button>
+					{error && <p className="text-red-500 text-sm">{error}</p>}
+					<button 
+						className={`btn btn-secondary text-sm ${(isBooking || hasBooking) ? 'opacity-50 cursor-not-allowed' : ''}`}
+						onClick={handleBooking}
+						disabled={isBooking || hasBooking}
+					>
+						{hasBooking ? 'Забронировано' : isBooking ? 'Бронирование...' : 'Забронировать'}
+					</button>
 				</div>
 			</div>
 		</div>

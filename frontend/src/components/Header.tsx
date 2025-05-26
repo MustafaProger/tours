@@ -106,6 +106,11 @@ const Header = () => {
 										className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'>
 										Личный кабинет
 									</Link>
+									<Link
+										to='/my-bookings'
+										className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'>
+										Мои бронирования
+									</Link>
 									<button
 										onClick={handleLogout}
 										className='block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'>
@@ -173,6 +178,11 @@ const Header = () => {
 									to='/dashboard'
 									className='block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-md'>
 									Личный кабинет
+								</Link>
+								<Link
+									to='/my-bookings'
+									className='block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-md'>
+									Мои бронирования
 								</Link>
 								<button
 									onClick={handleLogout}

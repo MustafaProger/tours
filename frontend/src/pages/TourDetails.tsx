@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Calendar, Clock, MapPin, Users, DollarSign, Camera, Utensils, Home, Check, Loader, Star } from 'lucide-react';
 import { Tour } from '../types/tour';
 import { toursApi } from '../services/api';
+import { bookingService } from '../services/bookingService';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 
@@ -11,79 +12,61 @@ const TourDetails = () => {
   const [tour, setTour] = useState<Tour | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [quantity, setQuantity] = useState(1);
-  const [selectedDate, setSelectedDate] = useState('');
-  const [bookingSubmitted, setBookingSubmitted] = useState(false);
+  const [isBooking, setIsBooking] = useState(false);
+  const [hasBooking, setHasBooking] = useState(false);
   const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTour = async () => {
+      if (!id) {
+        setError('Некорректный id тура');
+        setLoading(false);
+        return;
+      }
       try {
         setLoading(true);
-        
-        // Try to fetch from API first
-        try {
-          if (id) {
-            const data = await toursApi.getTourById(id);
-            setTour(data);
-            setSelectedDate(data.date);
-          }
-        } catch (apiError) {
-          console.error('API error, falling back to local data:', apiError);
-          
-          // Fallback to local data if API fails
-          const response = await fetch('http://localhost:3000/api/tours');
-          if (!response.ok) {
-            throw new Error('Не удалось загрузить данные');
-          }
-          
-          const data = await response.json();
-          // Find the tour matching the ID from the URL
-          const foundTour = data.find((t: Tour) => t.link.split('/').pop() === id);
-          
-          if (foundTour) {
-            setTour(foundTour);
-            setSelectedDate(foundTour.date);
-          } else {
-            setError('Тур не найден');
-          }
-        }
-        
-        setLoading(false);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Произошла ошибка');
+        const data = await toursApi.getTourById(id);
+        setTour(data);
+        setError(null);
+      } catch (err: any) {
+        setError(err?.response?.data?.message || err?.message || 'Произошла ошибка');
+      } finally {
         setLoading(false);
       }
     };
-    
     fetchTour();
   }, [id]);
 
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setQuantity(parseInt(e.target.value));
-  };
+  useEffect(() => {
+    const checkBooking = async () => {
+      if (!id || !isAuthenticated) return;
+      try {
+        const { data: bookings } = await bookingService.getMyBookings();
+        const found = bookings.some(b => b.tour?._id === id && !b.paid);
+        setHasBooking(found);
+      } catch (e) {
+        setHasBooking(false);
+      }
+    };
+    checkBooking();
+  }, [id, isAuthenticated]);
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedDate(e.target.value);
-  };
-
-  const handleBooking = (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const handleBooking = async () => {
     if (!isAuthenticated) {
-      // Redirect to login page if not authenticated
-      window.location.href = `/login?redirect=/tours/${id}`;
+      navigate(`/login?redirect=/tours/${id}`);
       return;
     }
-    
-    // In a real app, this would call the booking API
-    // For demo purposes, we'll just simulate a successful booking
-    setBookingSubmitted(true);
-    
-    // Reset after 5 seconds
-    setTimeout(() => {
-      setBookingSubmitted(false);
-    }, 5000);
+    try {
+      setIsBooking(true);
+      await bookingService.createBooking(id!);
+      alert('Тур успешно забронирован!');
+      navigate('/my-bookings');
+    } catch (err: any) {
+      setError(err?.response?.data?.message || 'Ошибка при бронировании');
+    } finally {
+      setIsBooking(false);
+    }
   };
 
   if (loading) {
@@ -110,8 +93,6 @@ const TourDetails = () => {
       </div>
     );
   }
-
-  const totalPrice = tour.price * quantity;
 
   return (
     <motion.div 
@@ -149,13 +130,15 @@ const TourDetails = () => {
                 <Clock size={20} className="mr-2 text-blue-300" />
                 <span>{tour.duration}</span>
               </div>
-              <div className="flex items-center">
-                <MapPin size={20} className="mr-2 text-blue-300" />
-                <span>{tour.location || 'Россия'}</span>
-              </div>
+              {tour.location && (
+                <div className="flex items-center">
+                  <MapPin size={20} className="mr-2 text-blue-300" />
+                  <span>{tour.location}</span>
+                </div>
+              )}
               <div className="flex items-center">
                 <DollarSign size={20} className="mr-2 text-blue-300" />
-                <span>{tour.price.toLocaleString('ru-RU')} ₽ / человека</span>
+                <span>{tour.price.toLocaleString('ru-RU')} ₽</span>
               </div>
             </div>
           </div>
@@ -176,11 +159,6 @@ const TourDetails = () => {
               >
                 <h2 className="text-2xl font-semibold mb-4">Описание тура</h2>
                 <p className="text-gray-700 mb-6">{tour.desc}</p>
-                <p className="text-gray-700">
-                  Вас ждет увлекательное путешествие, полное ярких впечатлений и новых открытий. 
-                  Вы увидите красивейшие природные ландшафты, познакомитесь с местной культурой и традициями. 
-                  Профессиональные гиды расскажут вам все самое интересное об этих удивительных местах.
-                </p>
 
                 {tour.highlights && tour.highlights.length > 0 && (
                   <div className="mt-6">
@@ -196,357 +174,70 @@ const TourDetails = () => {
                   </div>
                 )}
               </motion.div>
-              
-              <motion.div 
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="card p-6"
-              >
-                <h2 className="text-2xl font-semibold mb-4">Программа тура</h2>
-                <div className="space-y-6">
-                  {tour.itinerary ? (
-                    tour.itinerary.map((day, index) => (
-                      <div key={index}>
-                        <h3 className="text-lg font-medium mb-2">День {day.day}: {day.title}</h3>
-                        <p className="text-gray-700">{day.description}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <>
-                      <div>
-                        <h3 className="text-lg font-medium mb-2">День 1: Прибытие и знакомство</h3>
-                        <p className="text-gray-700">
-                          Встреча в аэропорту, трансфер до отеля. Размещение, отдых. 
-                          Вечером - приветственный ужин и знакомство с программой тура.
-                        </p>
-                      </div>
-                      
-                      <div>
-                        <h3 className="text-lg font-medium mb-2">День 2-3: Исследование окрестностей</h3>
-                        <p className="text-gray-700">
-                          Экскурсии по основным достопримечательностям региона. 
-                          Посещение живописных мест, подъем на смотровые площадки, фотосессия.
-                        </p>
-                      </div>
-                      
-                      <div>
-                        <h3 className="text-lg font-medium mb-2">День 4-5: Погружение в культуру</h3>
-                        <p className="text-gray-700">
-                          Знакомство с местными традициями, кухней и ремеслами. 
-                          Посещение мастер-классов, дегустация национальных блюд.
-                        </p>
-                      </div>
-                      
-                      <div>
-                        <h3 className="text-lg font-medium mb-2">День 6-7: Активный отдых</h3>
-                        <p className="text-gray-700">
-                          Пешие прогулки по живописным маршрутам, возможность попробовать различные 
-                          активности на свежем воздухе. Прощальный ужин и подведение итогов путешествия.
-                        </p>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </motion.div>
-              
-              <motion.div 
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="card p-6"
-              >
-                <h2 className="text-2xl font-semibold mb-4">Что включено</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <h3 className="text-lg font-medium mb-2 flex items-center">
-                      <Home className="mr-2 text-blue-500" size={20} />
-                      Проживание
-                    </h3>
-                    <ul className="space-y-2">
-                      <li className="flex items-start">
-                        <Check size={16} className="mr-2 text-green-500 mt-1" />
-                        <span>Комфортные отели 3-4*</span>
-                      </li>
-                      <li className="flex items-start">
-                        <Check size={16} className="mr-2 text-green-500 mt-1" />
-                        <span>Двухместное размещение</span>
-                      </li>
-                      <li className="flex items-start">
-                        <Check size={16} className="mr-2 text-green-500 mt-1" />
-                        <span>Все удобства в номере</span>
-                      </li>
-                    </ul>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-lg font-medium mb-2 flex items-center">
-                      <Utensils className="mr-2 text-blue-500" size={20} />
-                      Питание
-                    </h3>
-                    <ul className="space-y-2">
-                      <li className="flex items-start">
-                        <Check size={16} className="mr-2 text-green-500 mt-1" />
-                        <span>Завтраки в отеле</span>
-                      </li>
-                      <li className="flex items-start">
-                        <Check size={16} className="mr-2 text-green-500 mt-1" />
-                        <span>Приветственный и прощальный ужины</span>
-                      </li>
-                      <li className="flex items-start">
-                        <Check size={16} className="mr-2 text-green-500 mt-1" />
-                        <span>Обеды во время экскурсий</span>
-                      </li>
-                    </ul>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-lg font-medium mb-2 flex items-center">
-                      <Users className="mr-2 text-blue-500" size={20} />
-                      Сопровождение
-                    </h3>
-                    <ul className="space-y-2">
-                      <li className="flex items-start">
-                        <Check size={16} className="mr-2 text-green-500 mt-1" />
-                        <span>Профессиональный гид</span>
-                      </li>
-                      <li className="flex items-start">
-                        <Check size={16} className="mr-2 text-green-500 mt-1" />
-                        <span>Групповой трансфер</span>
-                      </li>
-                      <li className="flex items-start">
-                        <Check size={16} className="mr-2 text-green-500 mt-1" />
-                        <span>Медицинская страховка</span>
-                      </li>
-                    </ul>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-lg font-medium mb-2 flex items-center">
-                      <Camera className="mr-2 text-blue-500" size={20} />
-                      Активности
-                    </h3>
-                    <ul className="space-y-2">
-                      <li className="flex items-start">
-                        <Check size={16} className="mr-2 text-green-500 mt-1" />
-                        <span>Все экскурсии по программе</span>
-                      </li>
-                      <li className="flex items-start">
-                        <Check size={16} className="mr-2 text-green-500 mt-1" />
-                        <span>Входные билеты</span>
-                      </li>
-                      <li className="flex items-start">
-                        <Check size={16} className="mr-2 text-green-500 mt-1" />
-                        <span>Мастер-классы</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </motion.div>
 
-              {tour.reviews && tour.reviews.length > 0 && (
+              {tour.itinerary && tour.itinerary.length > 0 && (
                 <motion.div 
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
                   className="card p-6"
                 >
-                  <h2 className="text-2xl font-semibold mb-4">Отзывы</h2>
-                  <div className="space-y-4">
-                    {tour.reviews.map((review, index) => (
-                      <div key={index} className="border-b border-gray-200 pb-4 last:border-b-0 last:pb-0">
-                        <div className="flex items-center mb-2">
-                          <div className="flex items-center text-yellow-400 mr-2">
-                            {[...Array(5)].map((_, i) => (
-                              <Star 
-                                key={i} 
-                                size={16} 
-                                fill={i < review.rating ? "currentColor" : "none"}
-                              />
-                            ))}
-                          </div>
-                          <span className="font-medium">{review.user}</span>
-                        </div>
-                        <p className="text-gray-700 text-sm">{review.comment}</p>
-                        <p className="text-gray-500 text-xs mt-1">
-                          {new Date(review.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}
-                        </p>
+                  <h2 className="text-2xl font-semibold mb-6">Программа тура</h2>
+                  <div className="space-y-6">
+                    {tour.itinerary.map((day, index) => (
+                      <div key={index} className="border-l-2 border-blue-500 pl-4">
+                        <h3 className="text-lg font-medium mb-2">День {day.day}: {day.title}</h3>
+                        <p className="text-gray-700">{day.description}</p>
                       </div>
                     ))}
                   </div>
                 </motion.div>
               )}
             </div>
-            
-            {/* Booking Form */}
+
+            {/* Booking Card */}
             <div className="lg:col-span-1">
               <motion.div 
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
                 className="card p-6 sticky top-24"
               >
-                <h2 className="text-xl font-semibold mb-4">Забронировать тур</h2>
-                
-                {bookingSubmitted ? (
-                  <div className="bg-green-50 text-green-700 p-4 rounded-md mb-4">
-                    <p className="font-medium mb-2">Бронирование отправлено!</p>
-                    <p className="text-sm">Мы свяжемся с вами в ближайшее время для подтверждения деталей.</p>
-                  </div>
-                ) : (
-                  <form className="space-y-4" onSubmit={handleBooking}>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Количество человек
-                      </label>
-                      <select 
-                        value={quantity} 
-                        onChange={handleQuantityChange}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2"
-                      >
-                        {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
-                          <option key={num} value={num}>
-                            {num} {num === 1 ? 'человек' : num >= 2 && num <= 4 ? 'человека' : 'человек'}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Дата начала
-                      </label>
-                      <input 
-                        type="date" 
-                        value={selectedDate}
-                        onChange={handleDateChange}
-                        min={new Date().toISOString().split('T')[0]}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2"
-                      />
-                    </div>
-                    
-                    <div className="pt-4 border-t border-gray-200">
-                      <div className="flex justify-between mb-2">
-                        <span className="text-gray-600">Стоимость за 1 человека</span>
-                        <span className="font-medium">{tour.price.toLocaleString('ru-RU')} ₽</span>
-                      </div>
-                      <div className="flex justify-between mb-2">
-                        <span className="text-gray-600">Количество человек</span>
-                        <span className="font-medium">{quantity}</span>
-                      </div>
-                      <div className="flex justify-between text-lg font-semibold mt-2 pt-2 border-t border-gray-200">
-                        <span>Итого</span>
-                        <span className="text-blue-700">{totalPrice.toLocaleString('ru-RU')} ₽</span>
-                      </div>
-                    </div>
-                    
-                    <button 
-                      type="submit" 
-                      className="w-full btn btn-primary text-center"
-                    >
-                      {isAuthenticated ? 'Забронировать' : 'Войти и забронировать'}
-                    </button>
-                    
-                    <p className="text-sm text-gray-500 text-center">
-                      Бронирование без предоплаты. Оплата производится после подтверждения заявки.
+                <h3 className="text-xl font-semibold mb-4">Забронировать тур</h3>
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-gray-600 mb-1">Стоимость:</p>
+                    <p className="text-2xl font-bold text-blue-600">
+                      {tour.price.toLocaleString('ru-RU')} ₽
                     </p>
-                  </form>
-                )}
+                  </div>
+
+                  {tour.maxParticipants && (
+                    <div>
+                      <p className="text-gray-600 mb-1">Осталось мест:</p>
+                      <div className="flex items-center text-green-600">
+                        <Users size={20} className="mr-2" />
+                        <span>{tour.maxParticipants}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  <button
+                    onClick={handleBooking}
+                    disabled={isBooking || hasBooking}
+                    className={`btn btn-primary w-full ${(isBooking || hasBooking) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    {hasBooking ? 'Забронировано' : isBooking ? 'Бронирование...' : 'Забронировать'}
+                  </button>
+
+                  {!isAuthenticated && (
+                    <p className="text-sm text-gray-500 text-center">
+                      Необходимо <Link to={`/login?redirect=/tours/${id}`} className="text-blue-600 hover:underline">войти</Link> для бронирования
+                    </p>
+                  )}
+                </div>
               </motion.div>
             </div>
-          </div>
-        </div>
-      </section>
-      
-      {/* Related Tours Section */}
-      <section className="bg-gray-50 py-12">
-        <div className="container-custom">
-          <h2 className="text-2xl font-semibold mb-8">Похожие туры</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              viewport={{ once: true }}
-              className="card tour-card"
-            >
-              <div className="relative">
-                <img 
-                  src="https://imcdn.bolshayastrana.com/1200x410/BS_f16a2de4845fe4af095b2d2946b847addd57abc34a71b41b97456c65eaa6a0f0.jpeg" 
-                  alt="Алтай" 
-                  className="w-full h-48 object-cover"
-                />
-              </div>
-              <div className="p-4">
-                <h3 className="text-lg font-semibold mb-2">Алтайские горы</h3>
-                <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                  Путешествие по живописным местам Алтайского края
-                </p>
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-gray-900">42 000 ₽</span>
-                  <Link to="/tours/altai" className="text-blue-600 font-medium text-sm hover:text-blue-700">
-                    Подробнее
-                  </Link>
-                </div>
-              </div>
-            </motion.div>
-            
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="card tour-card"
-            >
-              <div className="relative">
-                <img 
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRoWdJERvhlaoR6ShM4bER03Nic9Dvm_VeIkA&s" 
-                  alt="Байкал" 
-                  className="w-full h-48 object-cover"
-                />
-              </div>
-              <div className="p-4">
-                <h3 className="text-lg font-semibold mb-2">Озеро Байкал</h3>
-                <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                  Незабываемое путешествие к самому глубокому озеру планеты
-                </p>
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-gray-900">49 000 ₽</span>
-                  <Link to="/tours/baikal" className="text-blue-600 font-medium text-sm hover:text-blue-700">
-                    Подробнее
-                  </Link>
-                </div>
-              </div>
-            </motion.div>
-            
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="card tour-card"
-            >
-              <div className="relative">
-                <img 
-                  src="https://icdn.bolshayastrana.com/1200x410/df/95/df9512bfbf16d25612ebc390b2bce93c.jpeg" 
-                  alt="Золотое кольцо" 
-                  className="w-full h-48 object-cover"
-                />
-              </div>
-              <div className="p-4">
-                <h3 className="text-lg font-semibold mb-2">Золотое кольцо</h3>
-                <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                  Культурно-исторический тур по древним городам России
-                </p>
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-gray-900">38 000 ₽</span>
-                  <Link to="/tours/golden-ring" className="text-blue-600 font-medium text-sm hover:text-blue-700">
-                    Подробнее
-                  </Link>
-                </div>
-              </div>
-            </motion.div>
           </div>
         </div>
       </section>

@@ -6,30 +6,29 @@ const cors = require("cors");
 
 const Tour = require("./models/Tour");
 const authRoutes = require("./routes/auth");
+const bookingRoutes = require("./routes/bookingRoutes");
+const tourRoutes = require("./routes/tourRoutes");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/tours";
 
 app.use(cors());
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/bookings", bookingRoutes);
+app.use("/api/tours", tourRoutes);
 
 app.get("/", (req, res) => {
 	res.send("API работает!");
 });
 
-app.get("/api/tours", async (req, res) => {
-	try {
-		const tours = await Tour.find();
-		res.json(tours);
-	} catch (error) {
-		res.status(500).json({ error: "Ошибка при получении туров" });
-	}
-});
-
 mongoose
-	.connect("mongodb://localhost:27017/data")
+	.connect(MONGODB_URI, {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+	})
 	.then(() => {
 		console.log("MongoDB подключена");
 		app.listen(PORT, () => {

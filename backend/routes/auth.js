@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
+const jwt = require("jsonwebtoken");
 
 const User = require("../models/User");
 
@@ -21,12 +22,10 @@ router.post("/register", async (req, res) => {
 	try {
 		const { name, email, password } = req.body;
 
-		// Проверка на пустые поля
 		if (!name || !email || !password) {
 			return res.status(400).json({ message: "Все поля обязательны" });
 		}
 
-		// Проверяем, есть ли уже пользователь
 		const existingUser = await User.findOne({ email });
 		if (existingUser) {
 			return res
@@ -34,29 +33,17 @@ router.post("/register", async (req, res) => {
 				.json({ message: "Пользователь с таким email уже существует" });
 		}
 
-		// Хэшируем пароль
-		const hashedPassword = await bcrypt.hash(password, 10);
+		const user = new User({ name, email, isConfirmed: false });
+		await user.setPassword(password);
+		user.confirmationCode = crypto.randomInt(100000, 999999).toString();
 
-		// Генерируем код подтверждения (6 цифр)
-		const confirmationCode = crypto.randomInt(100000, 999999).toString();
+		await user.save();
 
-		// Создаем пользователя в базе
-		const newUser = new User({
-			name,
-			email,
-			password: hashedPassword,
-			confirmationCode,
-			isConfirmed: false,
-		});
-
-		await newUser.save();
-
-		// Отправляем email с кодом
 		const mailOptions = {
 			from: "todzievdier@gmail.com",
 			to: email,
 			subject: "Код подтверждения регистрации",
-			text: `Ваш код подтверждения: ${confirmationCode}`,
+			text: `Ваш код подтверждения: ${user.confirmationCode}`,
 		};
 
 		await transporter.sendMail(mailOptions);
@@ -90,14 +77,57 @@ router.post("/confirm", async (req, res) => {
 		}
 
 		user.isConfirmed = true;
-		user.confirmationCode = null; // очищаем код
+		user.confirmationCode = null;
 		await user.save();
 
 		res.json({ message: "Пользователь подтвержден" });
 	} catch (error) {
 		console.error("Ошибка регистрации:", error);
-		console.error(error);
 		res.status(500).json({ message: "Ошибка подтверждения" });
+	}
+});
+
+// POST /api/login
+router.post("/login", async (req, res) => {
+	try {
+		const { email, password } = req.body;
+
+		if (!email || !password) {
+			return res.status(400).json({ message: "Email и пароль обязательны" });
+		}
+
+		const user = await User.findOne({ email });
+
+		if (!user) {
+			return res.status(401).json({ message: "Неверный email или пароль" });
+		}
+
+		const validPassword = await user.validatePassword(password);
+		if (!validPassword) {
+			return res.status(401).json({ message: "Неверный email или пароль" });
+		}
+
+		if (!user.isConfirmed) {
+			return res.status(403).json({ message: "Пользователь не подтвержден" });
+		}
+
+		const token = jwt.sign(
+			{ id: user._id, email: user.email },
+			process.env.JWT_SECRET,
+			{ expiresIn: "1d" }
+		);
+
+		res.json({
+			user: {
+				id: user._id,
+				name: user.name,
+				email: user.email,
+			},
+			token,
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Ошибка при входе" });
 	}
 });
 

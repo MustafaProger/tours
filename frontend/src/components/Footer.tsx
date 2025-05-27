@@ -83,30 +83,9 @@ const Footer = () => {
 						<ul className='space-y-2'>
 							<li>
 								<Link
-									to='/tours/kavkaz'
+									to='/tours'
 									className='text-gray-400 hover:text-white transition-colors'>
-									Горы Кавказа
-								</Link>
-							</li>
-							<li>
-								<Link
-									to='/tours/baikal'
-									className='text-gray-400 hover:text-white transition-colors'>
-									Байкал
-								</Link>
-							</li>
-							<li>
-								<Link
-									to='/tours/altai'
-									className='text-gray-400 hover:text-white transition-colors'>
-									Алтай
-								</Link>
-							</li>
-							<li>
-								<Link
-									to='/tours/golden-ring'
-									className='text-gray-400 hover:text-white transition-colors'>
-									Золотое кольцо
+									Все туры
 								</Link>
 							</li>
 						</ul>

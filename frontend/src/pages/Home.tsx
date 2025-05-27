@@ -130,7 +130,7 @@ const Home = () => {
                   <div className="flex justify-between items-center">
                     <span className="font-semibold text-gray-900">{tour.price.toLocaleString('ru-RU')} ₽</span>
                     <Link 
-                      to={`/tours/${tour.link.split('/').pop()}`}
+                      to={`/tours/${tour._id}`}
                       className="btn btn-primary text-sm"
                     >
                       Подробнее

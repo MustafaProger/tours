@@ -163,51 +163,23 @@ const Dashboard = () => {
                 <div className="card p-6">
                   <h2 className="text-xl font-semibold mb-6">Личная информация</h2>
                   
-                  <form className="space-y-4">
+                  <div className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <p className="block text-sm font-medium text-gray-700 mb-1">
                           Имя
-                        </label>
-                        <input
-                          type="text"
-                          defaultValue={user.name}
-                          className="w-full border border-gray-300 rounded-md px-3 py-2"
-                        />
+                        </p>
+                        <p>{user.name}</p>
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <p className="block text-sm font-medium text-gray-700 mb-1">
                           Email
-                        </label>
-                        <input
-                          type="email"
-                          defaultValue={user.email}
-                          className="w-full border border-gray-300 rounded-md px-3 py-2"
-                        />
+                        </p>
+                      <p>{user.email}</p>
                       </div>
                     </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Телефон
-                      </label>
-                      <input
-                        type="tel"
-                        placeholder="+7 (___) ___-__-__"
-                        className="w-full border border-gray-300 rounded-md px-3 py-2"
-                      />
-                    </div>
-                    
-                    <div className="pt-4">
-                      <button
-                        type="submit"
-                        className="btn btn-primary"
-                      >
-                        Сохранить изменения
-                      </button>
-                    </div>
-                  </form>
+                  </div>
                 </div>
               )}
               

@@ -10,7 +10,6 @@ import TourDetails from './pages/TourDetails';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
-import MyBookings from './components/MyBookings';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from "./other/ScrollToTop";
@@ -70,14 +69,6 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <Dashboard />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/my-bookings" 
-                  element={
-                    <ProtectedRoute>
-                      <MyBookings />
                     </ProtectedRoute>
                   } 
                 />

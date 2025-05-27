@@ -14,6 +14,7 @@ const TourDetails = () => {
   const [error, setError] = useState<string | null>(null);
   const [isBooking, setIsBooking] = useState(false);
   const [hasBooking, setHasBooking] = useState(false);
+  const [hasAlreadyPurchased, setHasAlreadyPurchased] = useState(false);
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -42,11 +43,14 @@ const TourDetails = () => {
     const checkBooking = async () => {
       if (!id || !isAuthenticated) return;
       try {
-        const { data: bookings } = await bookingService.getMyBookings();
-        const found = bookings.some(b => b.tour?._id === id && !b.paid);
-        setHasBooking(found);
+        const bookings = await bookingService.getMyBookings();
+        const hasUnpaidBooking = bookings.some(b => b.tour?._id === id && !b.paid);
+        const hasAlreadyPurchased = bookings.some(b => b.tour?._id === id && b.paid);
+        setHasBooking(hasUnpaidBooking);
+        setHasAlreadyPurchased(hasAlreadyPurchased);
       } catch (e) {
         setHasBooking(false);
+        setHasAlreadyPurchased(false);
       }
     };
     checkBooking();
@@ -61,7 +65,7 @@ const TourDetails = () => {
       setIsBooking(true);
       await bookingService.createBooking(id!);
       alert('Тур успешно забронирован!');
-      navigate('/my-bookings');
+      navigate('/dashboard');
     } catch (err: any) {
       setError(err?.response?.data?.message || 'Ошибка при бронировании');
     } finally {
@@ -222,18 +226,38 @@ const TourDetails = () => {
                     </div>
                   )}
 
+                  {error && (
+                    <div className="text-red-500 text-sm p-2 bg-red-50 rounded">
+                      {error}
+                    </div>
+                  )}
+
                   <button
                     onClick={handleBooking}
-                    disabled={isBooking || hasBooking}
-                    className={`btn btn-primary w-full ${(isBooking || hasBooking) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    disabled={isBooking || hasBooking || hasAlreadyPurchased}
+                    className={`btn btn-primary w-full ${(isBooking || hasBooking || hasAlreadyPurchased) ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
-                    {hasBooking ? 'Забронировано' : isBooking ? 'Бронирование...' : 'Забронировать'}
+                    {hasAlreadyPurchased 
+                      ? 'Тур уже куплен' 
+                      : hasBooking 
+                        ? 'Забронировано' 
+                        : isBooking 
+                          ? 'Бронирование...' 
+                          : 'Забронировать'
+                    }
                   </button>
 
                   {!isAuthenticated && (
                     <p className="text-sm text-gray-500 text-center">
                       Необходимо <Link to={`/login?redirect=/tours/${id}`} className="text-blue-600 hover:underline">войти</Link> для бронирования
                     </p>
+                  )}
+
+                  {hasAlreadyPurchased && (
+                    <div className="text-sm text-green-600 bg-green-50 p-2 rounded text-center">
+                      <Check size={16} className="inline mr-1" />
+                      Этот тур уже куплен. Вы можете посмотреть его в <Link to="/dashboard" className="underline">личном кабинете</Link>
+                    </div>
                   )}
                 </div>
               </motion.div>

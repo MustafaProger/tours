@@ -15,16 +15,21 @@ const TourCard = ({ tour }: TourCardProps) => {
 	const { isAuthenticated } = useAuth();
 	const navigate = useNavigate();
 	const [hasBooking, setHasBooking] = useState(false);
+	const [hasAlreadyPurchased, setHasAlreadyPurchased] = useState(false);
 
 	useEffect(() => {
 		const checkBooking = async () => {
 			if (!isAuthenticated) return;
 			try {
-				const { data: bookings } = await bookingService.getMyBookings();
-				const found = bookings.some(b => b.tour?._id === tour._id && !b.paid);
-				setHasBooking(found);
+				const bookings = await bookingService.getMyBookings();
+				// Проверяем есть ли неоплаченное бронирование или уже купленный тур
+				const hasUnpaidBooking = bookings.some(b => b.tour?._id === tour._id && !b.paid);
+				const hasAlreadyPurchased = bookings.some(b => b.tour?._id === tour._id && b.paid);
+				setHasBooking(hasUnpaidBooking);
+				setHasAlreadyPurchased(hasAlreadyPurchased);
 			} catch (e) {
 				setHasBooking(false);
+				setHasAlreadyPurchased(false);
 			}
 		};
 		checkBooking();
@@ -41,6 +46,7 @@ const TourCard = ({ tour }: TourCardProps) => {
 			setError('');
 			await bookingService.createBooking(tour._id);
 			alert('Тур успешно забронирован!');
+			navigate('/dashboard');
 		} catch (err: any) {
 			console.error('Booking error:', err);
 			if (err.message === 'Необходима авторизация') {
@@ -108,9 +114,9 @@ const TourCard = ({ tour }: TourCardProps) => {
 					</Link>
 					{error && <p className="text-red-500 text-sm">{error}</p>}
 					<button 
-						className={`btn btn-secondary text-sm ${(isBooking || hasBooking) ? 'opacity-50 cursor-not-allowed' : ''}`}
+						className={`btn btn-secondary text-sm ${(isBooking || hasBooking || hasAlreadyPurchased) ? 'opacity-50 cursor-not-allowed' : ''}`}
 						onClick={handleBooking}
-						disabled={isBooking || hasBooking}
+						disabled={isBooking || hasBooking || hasAlreadyPurchased}
 					>
 						{hasBooking ? 'Забронировано' : isBooking ? 'Бронирование...' : 'Забронировать'}
 					</button>

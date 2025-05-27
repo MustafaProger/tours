@@ -468,9 +468,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ open, onClose, booking, onSuc
                 <h3 className="mt-3 text-lg font-medium text-green-600">
                   Оплата прошла успешно!
                 </h3>
-                <p className="mt-2 text-sm text-gray-500">
-                  Подтверждение отправлено на ваш email
-                </p>
               </div>
             )}
 

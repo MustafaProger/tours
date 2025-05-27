@@ -263,123 +263,77 @@ const About = () => {
 						</p>
 					</div>
 
-					<div className='grid grid-cols-1 md:grid-cols-2 gap-12 items-center'>
-						<motion.div
-							initial={{ opacity: 0, y: 30 }}
-							whileInView={{ opacity: 1, y: 0 }}
-							transition={{ duration: 0.6 }}
-							viewport={{ once: true }}>
-							<div className='bg-white p-8 rounded-xl shadow-md'>
-								<div className='space-y-6'>
-									<div className='flex items-start'>
-										<div className='bg-blue-100 p-3 rounded-full mr-4'>
-											<MapPin
-												className='text-blue-600'
-												size={24}
-											/>
+					<div className='container-custom mx-auto px-4'>
+						<div className='flex justify-center'>
+							<motion.div
+								initial={{ opacity: 0, y: 30 }}
+								whileInView={{ opacity: 1, y: 0 }}
+								transition={{ duration: 0.6 }}
+								viewport={{ once: true }}
+								className='max-w-2xl w-full'>
+								<div className='bg-white p-8 rounded-xl shadow-md'>
+									<div className='space-y-6'>
+										<div className='flex items-start'>
+											<div className='bg-blue-100 p-3 rounded-full mr-4'>
+												<MapPin
+													className='text-blue-600'
+													size={24}
+												/>
+											</div>
+											<div>
+												<h3 className='text-lg font-semibold mb-1'>Адрес</h3>
+												<p className='text-gray-600'>
+													г. Москва, ул. Туристическая, д. 123
+												</p>
+											</div>
 										</div>
-										<div>
-											<h3 className='text-lg font-semibold mb-1'>Адрес</h3>
-											<p className='text-gray-600'>
-												г. Москва, ул. Туристическая, д. 123
-											</p>
-										</div>
-									</div>
 
-									<div className='flex items-start'>
-										<div className='bg-blue-100 p-3 rounded-full mr-4'>
-											<Phone
-												className='text-blue-600'
-												size={24}
-											/>
+										<div className='flex items-start'>
+											<div className='bg-blue-100 p-3 rounded-full mr-4'>
+												<Phone
+													className='text-blue-600'
+													size={24}
+												/>
+											</div>
+											<div>
+												<h3 className='text-lg font-semibold mb-1'>Телефон</h3>
+												<p className='text-gray-600'>+7 (495) 123-45-67</p>
+											</div>
 										</div>
-										<div>
-											<h3 className='text-lg font-semibold mb-1'>Телефон</h3>
-											<p className='text-gray-600'>+7 (495) 123-45-67</p>
-										</div>
-									</div>
 
-									<div className='flex items-start'>
-										<div className='bg-blue-100 p-3 rounded-full mr-4'>
-											<Mail
-												className='text-blue-600'
-												size={24}
-											/>
+										<div className='flex items-start'>
+											<div className='bg-blue-100 p-3 rounded-full mr-4'>
+												<Mail
+													className='text-blue-600'
+													size={24}
+												/>
+											</div>
+											<div>
+												<h3 className='text-lg font-semibold mb-1'>Email</h3>
+												<p className='text-gray-600'>info@tourpro.ru</p>
+											</div>
 										</div>
-										<div>
-											<h3 className='text-lg font-semibold mb-1'>Email</h3>
-											<p className='text-gray-600'>info@tourpro.ru</p>
-										</div>
-									</div>
 
-									<div className='flex items-start'>
-										<div className='bg-blue-100 p-3 rounded-full mr-4'>
-											<Clock
-												className='text-blue-600'
-												size={24}
-											/>
-										</div>
-										<div>
-											<h3 className='text-lg font-semibold mb-1'>
-												Часы работы
-											</h3>
-											<p className='text-gray-600'>Пн-Пт: 9:00 - 20:00</p>
-											<p className='text-gray-600'>Сб: 10:00 - 18:00</p>
-											<p className='text-gray-600'>Вс: выходной</p>
+										<div className='flex items-start'>
+											<div className='bg-blue-100 p-3 rounded-full mr-4'>
+												<Clock
+													className='text-blue-600'
+													size={24}
+												/>
+											</div>
+											<div>
+												<h3 className='text-lg font-semibold mb-1'>
+													Часы работы
+												</h3>
+												<p className='text-gray-600'>Пн-Пт: 9:00 - 20:00</p>
+												<p className='text-gray-600'>Сб: 10:00 - 18:00</p>
+												<p className='text-gray-600'>Вс: выходной</p>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-						</motion.div>
-
-						<motion.div
-							initial={{ opacity: 0, y: 30 }}
-							whileInView={{ opacity: 1, y: 0 }}
-							transition={{ duration: 0.6, delay: 0.2 }}
-							viewport={{ once: true }}>
-							<div className='bg-white p-8 rounded-xl shadow-md'>
-								<h3 className='text-xl font-semibold mb-6'>Напишите нам</h3>
-
-								<form className='space-y-4'>
-									<div>
-										<label className='block text-sm font-medium text-gray-700 mb-1'>
-											Ваше имя
-										</label>
-										<input
-											type='text'
-											className='w-full border border-gray-300 rounded-md px-3 py-2'
-											placeholder='Иван Иванов'
-										/>
-									</div>
-
-									<div>
-										<label className='block text-sm font-medium text-gray-700 mb-1'>
-											Email
-										</label>
-										<input
-											type='email'
-											className='w-full border border-gray-300 rounded-md px-3 py-2'
-											placeholder='ivan@example.com'
-										/>
-									</div>
-
-									<div>
-										<label className='block text-sm font-medium text-gray-700 mb-1'>
-											Сообщение
-										</label>
-										<textarea
-											className='w-full border border-gray-300 rounded-md px-3 py-2 h-32'
-											placeholder='Ваш вопрос или комментарий...'></textarea>
-									</div>
-
-									<button
-										type='submit'
-										className='btn btn-primary w-full'>
-										Отправить
-									</button>
-								</form>
-							</div>
-						</motion.div>
+							</motion.div>
+						</div>
 					</div>
 				</div>
 			</section>

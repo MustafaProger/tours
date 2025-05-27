@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Tour } from '../types/tour';
-import { User, MapPin, Calendar, Trash2, Loader } from 'lucide-react';
+import { User, MapPin, Calendar, Trash2, Loader, CreditCard, CheckCircle } from 'lucide-react';
 import { bookingService } from '../services/bookingService';
 import { Booking } from '../services/bookingService';
+import PaymentForm from '../components/PaymentForm';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -11,24 +12,67 @@ const Dashboard = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+
+  const fetchBookings = async () => {
+    try {
+      console.log('DEBUG: Starting fetchBookings in Dashboard');
+      setLoading(true);
+      
+      const bookings = await bookingService.getMyBookings();
+      
+      console.log('DEBUG: Received bookings in Dashboard:', {
+        total: bookings.length,
+        bookings: bookings.map(b => ({
+          id: b._id,
+          paid: b.paid,
+          tour: b.tour?.title,
+          price: b.price
+        }))
+      });
+
+      setBookings(bookings);
+      setError('');
+    } catch (err) {
+      console.error('DEBUG: Error in Dashboard fetchBookings:', err);
+      setError('Не удалось загрузить бронирования');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Разделяем бронирования на оплаченные и неоплаченные
+  const paidBookings = bookings.filter(booking => {
+    const isPaid = booking.paid === true;
+    console.log('DEBUG: Checking booking paid status:', {
+      id: booking._id,
+      paid: booking.paid,
+      isPaidAfterCheck: isPaid,
+      tour: booking.tour?.title,
+      price: booking.price
+    });
+    return isPaid;
+  });
+  
+  const unpaidBookings = bookings.filter(booking => booking.paid === false);
 
   useEffect(() => {
-    const fetchBookings = async () => {
-      try {
-        setLoading(true);
-        const response = await bookingService.getMyBookings();
-        setBookings(response.data);
-        setError('');
-      } catch (err) {
-        setError('Не удалось загрузить бронирования');
-        console.error('Error fetching bookings:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchBookings();
   }, []);
+
+  useEffect(() => {
+    console.log('DEBUG: Bookings state updated:', {
+      total: bookings.length,
+      paid: paidBookings.length,
+      unpaid: unpaidBookings.length,
+      paidBookings: paidBookings.map(b => ({
+        id: b._id,
+        tour: b.tour?.title,
+        price: b.price,
+        paid: b.paid
+      }))
+    });
+  }, [bookings]);
 
   const handleCancelBooking = async (id: string) => {
     try {
@@ -37,6 +81,14 @@ const Dashboard = () => {
     } catch (err) {
       setError('Не удалось отменить бронирование');
     }
+  };
+
+  const handlePaymentSuccess = async () => {
+    console.log('Оплата успешна, обновляем список бронирований...');
+    await fetchBookings();
+    setSelectedBooking(null);
+    setActiveTab('my-tours');
+    console.log('Переключено на вкладку my-tours');
   };
 
   if (!user) {
@@ -78,11 +130,18 @@ const Dashboard = () => {
                     Профиль
                   </button>
                   <button 
+                    className={`w-full text-left py-2 px-3 rounded-md mb-1 ${activeTab === 'my-tours' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-100'}`}
+                    onClick={() => setActiveTab('my-tours')}
+                  >
+                    <CheckCircle size={18} className="inline mr-2" />
+                    Мои туры
+                  </button>
+                  <button 
                     className={`w-full text-left py-2 px-3 rounded-md mb-1 ${activeTab === 'bookings' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-100'}`}
                     onClick={() => setActiveTab('bookings')}
                   >
-                    <Calendar size={18} className="inline mr-2" />
-                    Мои бронирования
+                    <CreditCard size={18} className="inline mr-2" />
+                    Бронирования
                   </button>
                 </div>
               </div>
@@ -152,29 +211,29 @@ const Dashboard = () => {
                 </div>
               )}
               
-              {activeTab === 'bookings' && (
+              {activeTab === 'my-tours' && (
                 <div>
-                  <h2 className="text-xl font-semibold mb-6">Мои бронирования</h2>
+                  <h2 className="text-xl font-semibold mb-6">Мои туры</h2>
                   
                   {loading ? (
                     <div className="flex items-center justify-center py-12">
                       <Loader className="animate-spin mr-2 text-blue-600" size={24} />
-                      <span>Загрузка бронирований...</span>
+                      <span>Загрузка туров...</span>
                     </div>
                   ) : error ? (
                     <div className="card p-8 text-center text-red-600">
                       <p>{error}</p>
                     </div>
-                  ) : bookings.length === 0 ? (
+                  ) : paidBookings.length === 0 ? (
                     <div className="card p-8 text-center">
-                      <p className="text-gray-600 mb-4">У вас пока нет забронированных туров</p>
+                      <p className="text-gray-600 mb-4">У вас пока нет купленных туров</p>
                       <a href="/tours" className="btn btn-primary inline-block">
                         Найти тур
                       </a>
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {bookings.map(booking => (
+                      {paidBookings.map(booking => (
                         <div key={booking._id} className="card p-4 md:p-6">
                           <div className="flex flex-col md:flex-row gap-4">
                             <div className="md:w-1/4">
@@ -187,10 +246,79 @@ const Dashboard = () => {
                             <div className="md:w-3/4">
                               <div className="flex flex-col md:flex-row justify-between mb-4">
                                 <h3 className="text-lg font-semibold">{booking.tour?.title || 'Без названия'}</h3>
-                                <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                  booking.paid ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                                }`}>
-                                  {booking.paid ? 'Оплачено' : 'Ожидает оплаты'}
+                                <div className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                  <CheckCircle size={14} className="mr-1" />
+                                  Оплачено
+                                </div>
+                              </div>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <p className="text-sm text-gray-500">Дата покупки:</p>
+                                  <p className="font-medium">
+                                    {new Date(booking.createdAt).toLocaleDateString('ru-RU')}
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-sm text-gray-500">Стоимость:</p>
+                                  <p className="font-medium">{booking.price?.toLocaleString('ru-RU') || '0'} ₽</p>
+                                </div>
+                                <div>
+                                  <p className="text-sm text-gray-500">Дата тура:</p>
+                                  <p className="font-medium">
+                                    {booking.tour?.date ? new Date(booking.tour.date).toLocaleDateString('ru-RU') : '—'}
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-sm text-gray-500">Место проведения:</p>
+                                  <p className="font-medium">{booking.tour?.location || '—'}</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {activeTab === 'bookings' && (
+                <div>
+                  <h2 className="text-xl font-semibold mb-6">Бронирования</h2>
+                  
+                  {loading ? (
+                    <div className="flex items-center justify-center py-12">
+                      <Loader className="animate-spin mr-2 text-blue-600" size={24} />
+                      <span>Загрузка бронирований...</span>
+                    </div>
+                  ) : error ? (
+                    <div className="card p-8 text-center text-red-600">
+                      <p>{error}</p>
+                    </div>
+                  ) : unpaidBookings.length === 0 ? (
+                    <div className="card p-8 text-center">
+                      <p className="text-gray-600 mb-4">У вас нет активных бронирований</p>
+                      <a href="/tours" className="btn btn-primary inline-block">
+                        Найти тур
+                      </a>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {unpaidBookings.map(booking => (
+                        <div key={booking._id} className="card p-4 md:p-6">
+                          <div className="flex flex-col md:flex-row gap-4">
+                            <div className="md:w-1/4">
+                              <img 
+                                src={booking.tour?.imageCover || booking.tour?.image || '/placeholder.jpg'} 
+                                alt={booking.tour?.title || 'Изображение тура'} 
+                                className="w-full h-32 object-cover rounded-md" 
+                              />
+                            </div>
+                            <div className="md:w-3/4">
+                              <div className="flex flex-col md:flex-row justify-between mb-4">
+                                <h3 className="text-lg font-semibold">{booking.tour?.title || 'Без названия'}</h3>
+                                <div className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                  Ожидает оплаты
                                 </div>
                               </div>
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -216,11 +344,12 @@ const Dashboard = () => {
                                 </div>
                               </div>
                               <div className="flex justify-end space-x-3">
-                                {!booking.paid && (
-                                  <button className="btn btn-primary">
-                                    Оплатить
-                                  </button>
-                                )}
+                                <button 
+                                  onClick={() => setSelectedBooking(booking)}
+                                  className="btn btn-primary"
+                                >
+                                  Оплатить
+                                </button>
                                 <button 
                                   onClick={() => handleCancelBooking(booking._id)}
                                   className="btn btn-outline-danger flex items-center"
@@ -241,6 +370,15 @@ const Dashboard = () => {
           </div>
         </div>
       </section>
+
+      {selectedBooking && (
+        <PaymentForm
+          open={!!selectedBooking}
+          onClose={() => setSelectedBooking(null)}
+          booking={selectedBooking}
+          onSuccess={handlePaymentSuccess}
+        />
+      )}
     </div>
   );
 };

@@ -78,23 +78,69 @@ router.post('/', protect, async (req, res) => {
 // Получить все бронирования пользователя
 router.get('/my-bookings', protect, async (req, res) => {
   try {
+    console.log('DEBUG: Getting bookings for user:', {
+      userId: req.user.id,
+      userObject: req.user
+    });
+    
+    // Сначала проверим, есть ли вообще бронирования без фильтров
+    const allBookings = await Booking.find({
+      user: req.user.id
+    });
+    
+    console.log('DEBUG: All bookings before filtering:', {
+      count: allBookings.length,
+      bookings: allBookings.map(b => ({
+        _id: b._id,
+        paid: b.paid,
+        cancelled: b.cancelled,
+        userId: b.user
+      }))
+    });
+
+    // Теперь делаем основной запрос с фильтрами
     const bookings = await Booking.find({ 
       user: req.user.id,
-      cancelled: { $ne: true },
-      paid: false
+      cancelled: { $ne: true }
     })
     .populate({
       path: 'tour',
       select: 'title name price image imageCover date duration location description'
     })
-    .sort({ createdAt: -1 }); // Сортировка по дате создания (новые первыми)
+    .sort({ createdAt: -1 });
+
+    console.log('DEBUG: Filtered bookings:', {
+      count: bookings.length,
+      bookings: bookings.map(b => ({
+        _id: b._id,
+        paid: b.paid,
+        cancelled: b.cancelled,
+        tourId: b.tour?._id,
+        tourTitle: b.tour?.title
+      }))
+    });
+
+    // Подготовка ответа
+    const responseData = bookings;
+
+    console.log('DEBUG: Response data:', {
+      count: responseData.length,
+      paidCount: responseData.filter(b => b.paid === true).length,
+      unpaidCount: responseData.filter(b => b.paid === false).length,
+      firstBooking: responseData[0] ? {
+        _id: responseData[0]._id,
+        paid: responseData[0].paid,
+        tourTitle: responseData[0].tour?.title
+      } : null
+    });
 
     res.status(200).json({
       status: 'success',
       results: bookings.length,
-      data: bookings
+      data: responseData
     });
   } catch (error) {
+    console.error('DEBUG: Error in /my-bookings:', error);
     res.status(400).json({
       status: 'fail',
       message: error.message
@@ -141,6 +187,8 @@ router.delete('/:id', protect, async (req, res) => {
 // Оплатить бронирование
 router.post('/:id/pay', protect, async (req, res) => {
   try {
+    console.log('Payment request received for booking:', req.params.id);
+    
     const booking = await Booking.findOne({
       _id: req.params.id,
       cancelled: { $ne: true }
@@ -150,12 +198,9 @@ router.post('/:id/pay', protect, async (req, res) => {
     });
 
     if (!booking) {
-      console.log('PAYMENT DEBUG:', {
+      console.log('PAYMENT DEBUG: Booking not found', {
         bookingId: req.params.id,
-        userFromToken: req.user.id,
-        bookingFound: !!booking,
-        bookingUser: null,
-        bookingUserId: null
+        userFromToken: req.user.id
       });
       return res.status(404).json({
         status: 'error',
@@ -165,13 +210,15 @@ router.post('/:id/pay', protect, async (req, res) => {
 
     // Корректное сравнение user
     const bookingUserId = booking.user._id ? booking.user._id.toString() : booking.user.toString();
-    console.log('PAYMENT DEBUG:', {
+    console.log('PAYMENT DEBUG: Access check', {
       bookingId: req.params.id,
       userFromToken: req.user.id,
       bookingFound: !!booking,
       bookingUser: booking.user,
-      bookingUserId
+      bookingUserId,
+      currentPaidStatus: booking.paid
     });
+
     if (bookingUserId !== req.user.id.toString()) {
       return res.status(403).json({
         status: 'error',
@@ -179,15 +226,19 @@ router.post('/:id/pay', protect, async (req, res) => {
       });
     }
 
-    // Здесь можно добавить интеграцию с реальной платежной системой
+    // Устанавливаем статус оплаты
     booking.paid = true;
-    await booking.save();
+    console.log('PAYMENT DEBUG: Setting paid status to true');
+    
+    const savedBooking = await booking.save();
+    console.log('PAYMENT DEBUG: Booking saved with new paid status:', savedBooking.paid);
 
     res.status(200).json({
       status: 'success',
-      data: booking
+      data: savedBooking
     });
   } catch (error) {
+    console.error('PAYMENT ERROR:', error);
     res.status(400).json({
       status: 'error',
       error: error.message

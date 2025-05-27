@@ -90,22 +90,49 @@ export const bookingService = {
   },
 
   // Получить все бронирования пользователя
-  getMyBookings: async (): Promise<{ data: Booking[] }> => {
+  getMyBookings: async (): Promise<Booking[]> => {
     try {
+      console.log('DEBUG: Starting getMyBookings request');
+      
       const token = localStorage.getItem('token');
       if (!token) {
         throw new Error('Необходима авторизация');
       }
+
       const response = await api.get<ApiResponse<Booking[]>>('/bookings/my-bookings', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log('API Response:', response.data); // Для отладки
-      return {
-        data: response.data.data || []
-      };
+
+      console.log('DEBUG: Raw API response:', {
+        status: response.data.status,
+        hasData: !!response.data.data,
+        dataLength: response.data.data?.length
+      });
+
+      if (!response.data.data) {
+        console.log('DEBUG: No bookings data in response');
+        return [];
+      }
+
+      const bookings = response.data.data;
+      
+      console.log('DEBUG: Processed bookings:', {
+        total: bookings.length,
+        paidBookings: bookings.filter(b => b.paid === true).length,
+        unpaidBookings: bookings.filter(b => b.paid === false).length,
+        sample: bookings[0] ? {
+          id: bookings[0]._id,
+          paid: bookings[0].paid,
+          tour: bookings[0].tour?.title,
+          price: bookings[0].price
+        } : null
+      });
+
+      return bookings;
     } catch (error) {
+      console.error('DEBUG: Error in getMyBookings:', error);
       throw handleApiError(error);
     }
   },

@@ -1,0 +1,53 @@
+erDiagram
+    USER ||--o{ BOOKING : makes
+    USER ||--o{ REVIEW : writes
+    TOUR ||--o{ BOOKING : has
+    TOUR ||--o{ REVIEW : receives
+    
+    USER {
+        ObjectId id PK
+        string name
+        string email
+        string password
+        string role
+    }
+    
+    TOUR {
+        ObjectId id PK
+        string title
+        string description
+        number price
+        string duration
+        date date
+        string time
+        string location
+        string meetingPoint
+        string image
+        string imageCover
+        number maxParticipants
+        number currentParticipants
+        array included
+        array excluded
+        array itinerary
+    }
+    
+    BOOKING {
+        ObjectId id PK
+        ObjectId tourId FK
+        ObjectId userId FK
+        date date
+        number price
+        boolean paid
+        boolean cancelled
+        number guests
+        date createdAt
+    }
+    
+    REVIEW {
+        ObjectId id PK
+        ObjectId tourId FK
+        ObjectId userId FK
+        number rating
+        string comment
+        date createdAt
+    } 

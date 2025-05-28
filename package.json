@@ -1,0 +1,27 @@
+{
+  "name": "tours",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MustafaProger/tours.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/MustafaProger/tours/issues"
+  },
+  "homepage": "https://github.com/MustafaProger/tours#readme",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

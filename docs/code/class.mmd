@@ -1,0 +1,65 @@
+classDiagram
+    direction LR
+    
+    class User {
+        -id: ObjectId
+        -name: string
+        -email: string
+        -password: string
+        -role: string
+        +register(name, email, password)
+        +login(email, password)
+        +updateProfile(data)
+        +getBookings()
+        +getReviews()
+    }
+
+    class Tour {
+        -id: ObjectId
+        -title: string
+        -description: string
+        -price: number
+        -duration: string
+        -date: Date
+        -time: string
+        -location: string
+        -meetingPoint: string
+        -image: string[]
+        -maxParticipants: number
+        +create(data)
+        +update(id, data)
+        +delete(id)
+        +checkAvailability()
+    }
+
+    class Booking {
+        -id: ObjectId
+        -tourId: ObjectId
+        -userId: ObjectId
+        -date: Date
+        -price: number
+        -paid: boolean
+        -cancelled: boolean
+        -guests: number
+        +create(userId, tourId, data)
+        +cancel()
+        +updatePaymentStatus()
+    }
+
+    class Review {
+        -id: ObjectId
+        -tourId: ObjectId
+        -userId: ObjectId
+        -rating: number
+        -comment: string
+        -createdAt: Date
+        +create(userId, tourId, data)
+        +update(data)
+        +delete()
+    }
+
+    %% Relationships
+    User "1" *-- "0..*" Booking
+    User "1" *-- "0..*" Review
+    Tour "1" *-- "0..*" Booking
+    Tour "1" *-- "0..*" Review 
